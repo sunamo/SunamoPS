@@ -1,0 +1,2 @@
+﻿Nechat to tu vše, i když .net fw už používat nebudu
+Může se mi to hodit když to nebudu chtít asynchronně
