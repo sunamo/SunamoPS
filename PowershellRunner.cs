@@ -1,17 +1,3 @@
-using SunamoArgs;
-using SunamoCollections;
-using SunamoCollectionsGeneric;
-using SunamoDictionary;
-using SunamoExceptions;
-using SunamoExceptions.OnlyInSE;
-using SunamoFileIO;
-using SunamoFileSystem;
-using SunamoInterfaces.Interfaces;
-using SunamoInterfaces.Interfaces.SunamoPS;
-using SunamoStringGetLines;
-using SunamoStringJoin;
-using SunamoThisApp;
-
 namespace SunamoPS;
 
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
@@ -71,7 +57,7 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
 
 
         bool fileExists = false;
-        if (e.pathToSaveLoadPsOutput != null && FS.ExistsFile(e.pathToSaveLoadPsOutput))
+        if (e.pathToSaveLoadPsOutput != null && File.Exists(e.pathToSaveLoadPsOutput))
         {
             // todo zde podmínečně kontrolovat zda DEBUG je přítomen
             fileExists = true;

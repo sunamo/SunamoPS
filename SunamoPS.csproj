@@ -3,33 +3,22 @@
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Version>24.1.14.1</Version>
+    <Version>24.1.24.1</Version>
     <Description>Working with Powershell 7 - Invoking commands, return outputs etc.</Description>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="C:\Users\r\.nuget\packages\sunamoxlf\23.12.9.1\contentFiles\any\net8.0\WinSec\Readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.Commands.Management" Version="7.4.1" />
     <PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="7.4.1" />
-    <PackageReference Include="Microsoft.PowerShell.ConsoleHost" Version="7.4.1" />
-    <PackageReference Include="Microsoft.WSMan.Management" Version="7.4.1" />
-    <PackageReference Include="SunamoArgs" Version="24.1.11.1" />
-    <PackageReference Include="SunamoCollections" Version="24.1.10.1" />
-    <PackageReference Include="SunamoCollectionsGeneric" Version="24.1.10.1" />
-    <PackageReference Include="SunamoDictionary" Version="24.1.12.1" />
-    <PackageReference Include="SunamoFileSystem" Version="24.1.12.1" />
-    <PackageReference Include="SunamoShared" Version="24.1.12.1" />
-    <PackageReference Include="SunamoString" Version="24.1.10.1" />
-    <PackageReference Include="SunamoStringJoin" Version="24.1.10.1" />
-    <PackageReference Include="SunamoValues" Version="24.1.10.1" />
-    <PackageReference Include="SunamoExtensions" Version="24.1.10.1" />
-    <PackageReference Include="SunamoXlf" Version="24.1.10.1" />
+    <PackageReference Include="SunamoCollections" Version="24.1.24.1" />
+    <PackageReference Include="SunamoDictionary" Version="24.1.23.1" />
+    <PackageReference Include="SunamoShared" Version="24.1.14.2" />
+    <PackageReference Include="SunamoString" Version="24.1.22.1" />
+    <PackageReference Include="SunamoStringJoin" Version="24.1.14.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="7.4.1" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.4.0" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
     <PackageReference Include="System.Management.Automation" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
