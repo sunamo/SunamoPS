@@ -1,4 +1,9 @@
+
 namespace SunamoPS;
+
+using SunamoStringSplit;
+using System.Text.RegularExpressions;
+
 
 public class PowershellParser : IPowershellParser
 {
@@ -15,11 +20,11 @@ public class PowershellParser : IPowershellParser
     {
         if (d.Contains(charWhichIsNotContained))
         {
-            ThrowEx.Custom(d + " contains " + charWhichIsNotContained);
+            throw new Exception(d + " contains " + charWhichIsNotContained);
         }
 
         StringBuilder sb = new StringBuilder(d);
-        var b = SH.ValuesBetweenQuotes(d, true);
+        var b = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
         foreach (var item in b)
         {
             sb = sb.Replace(item, item.Replace(AllStringsSE.space, charWhichIsNotContained));

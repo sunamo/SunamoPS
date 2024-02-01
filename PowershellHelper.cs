@@ -1,3 +1,5 @@
+using SunamoStringSplit;
+
 namespace SunamoPS;
 
 public class PowershellHelper : IPowershellHelper
@@ -72,7 +74,7 @@ await
 #endif
 PowershellRunner.ci.InvokeProcess(command + ".exe", arguments);
 
-        var line = CA.ReturnWhichContains(lines, lang).First();
+        var line = lines.First(d => d.Contains(lang)); //CA.ReturnWhichContains(lines, lang).First();
         if (line == null)
         {
             return null;

@@ -19,7 +19,7 @@ InvokeSingle(string command)
 #if ASYNC
 await
 #endif
-Invoke(CA.ToListString(command)))[0];
+Invoke(new List<string>([command])))[0];
     }
     #endregion
 
@@ -38,7 +38,7 @@ Invoke(CA.ToListString(command)))[0];
     //#if ASYNC
     //    await
     //#endif
-    // InvokeAsync(CA.ToListString(commands), new PsInvokeArgs { immediatelyToStatus = false })[0];
+    // InvokeAsync(new List<string>(commands), new PsInvokeArgs { immediatelyToStatus = false })[0];
     //        }
 
 

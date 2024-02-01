@@ -1,4 +1,7 @@
+
 namespace SunamoPS;
+using SunamoStringGetLines;
+using SunamoThisApp;
 
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
 {
@@ -61,7 +64,7 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
         {
             // todo zde podmínečně kontrolovat zda DEBUG je přítomen
             fileExists = true;
-            var r = JsonConvert.DeserializeObject<List<string>>(await TF.ReadAllText(e.pathToSaveLoadPsOutput));
+            var r = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(e.pathToSaveLoadPsOutput));
 
             List<List<string>> r2 = new List<List<string>>(r.Count);
             foreach (var item in r)
@@ -150,7 +153,7 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
                 }
                 catch (Exception ex)
                 {
-                    ThrowEx.Custom(ex);
+                    throw new Exception(Exceptions.TextOfExceptions(ex));
                     // zde by to mělo vyhodit a podle toho opravit. pak autoservisy
                     //CL.WriteLine(ex);
                     //throw;
@@ -166,7 +169,7 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
                             ErrorRecordHelper.Text(sb, item2);
                         }
                     }
-                    returnList.Add(CAG.ToList<string>(sb.ToString().ToUnixLineEnding()));
+                    returnList.Add(new List<string>([sb.ToString().ToUnixLineEnding()]));
                 }
                 else
                 {
@@ -175,10 +178,10 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
             }
         }
 
-        for (int i = 0; i < returnList.Count; i++)
-        {
-            returnList[i] = CA.Trim(returnList[i]);
-        }
+        //for (int i = 0; i < returnList.Count; i++)
+        //{
+        //    returnList[i] = CA.Trim(returnList[i]);
+        //}
 
         //result.Wait();
         //var output = result.Result;
@@ -213,7 +216,7 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
                 var commandTrimmed = commands[i].Trim();
                 if (!commandTrimmed.StartsWith("cd "))
                 {
-                    DictionaryHelper.AddOrCreate(UsedCommandsInFolders, commandTrimmed, SHJoin.JoinNL(returnList[i]));
+                    DictionaryHelper.AddOrCreate(UsedCommandsInFolders, commandTrimmed, string.Join(Environment.NewLine, returnList[i]));
                     break;
                 }
             }
@@ -224,10 +227,10 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
             List<string> ls = new List<string>(returnList.Count);
             foreach (var item in returnList)
             {
-                ls.Add(SHJoin.JoinNL(item));
+                ls.Add(string.Join(Environment.NewLine, item));
             }
 
-            await TF.WriteAllText(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(ls));
+            await File.WriteAllTextAsync(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(ls));
         }
 
         return returnList;
@@ -256,7 +259,7 @@ Invoke(l, new PsInvokeArgs { writePb = writePb });
 
         foreach (var item in result)
         {
-            sb.AppendLine(SHJoin.JoinNL(item).Trim());
+            sb.AppendLine(string.Join(Environment.NewLine, item).Trim());
         }
 
         var result2 = sb.ToString().Trim();
@@ -285,7 +288,11 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
 
         // Its not working with .net6 so temporarily disable. Když to nebude fungovat musím vymyslet náhradní řešení.
         //W32.EnableWow64FSRedirection(false);
-        FS.AddExtensionIfDontHave(exeFileNameWithoutPath, AllExtensions.exe);
+        if (!exeFileNameWithoutPath.EndsWith(AllExtensions.exe))
+        {
+            exeFileNameWithoutPath += AllExtensions.exe;
+        }
+        //FS.AddExtensionIfDontHave(exeFileNameWithoutPath, AllExtensions.exe);
 
         //Create process
         System.Diagnostics.Process pProcess = new System.Diagnostics.Process();

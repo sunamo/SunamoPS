@@ -1,3 +1,5 @@
+namespace SunamoPS.Properties;
+
 //namespace SunamoPS.Properties;
 
 //// General Information about an assembly is controlled through the following

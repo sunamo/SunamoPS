@@ -72,7 +72,7 @@ namespace SunamoPS;
 
 //            foreach (var item in result)
 //            {
-//                sb.AppendLine(SHJoin.JoinNL(item).Trim());
+//                sb.AppendLine(string.Join(Environment.NewLine, item).Trim());
 //            }
 
 //            var result2 = sb.ToString().Trim();
