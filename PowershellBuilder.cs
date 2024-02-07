@@ -1,3 +1,5 @@
+using SunamoValues;
+
 namespace SunamoPS;
 
 /// <summary>
@@ -7,23 +9,23 @@ namespace SunamoPS;
 /// </summary>
 public class PowershellBuilder : IPowershellBuilder
 {
-    public TextBuilder sb { get; set; } = null;
+    public ITextBuilder sb { get; set; } = null;
     public IGitBashBuilder Git { get; set; }
     public INpmBashBuilder Npm { get; set; }
 
     /// <summary>
     /// musí být public aby šel vytvořit přes .Create
     /// </summary>
-    public PowershellBuilder()
+    public PowershellBuilder(Func<bool, ITextBuilder> ci)
     {
         // 15.4.23 na false. čti public TextBuilder(bool useList = false) proč
-        sb = new TextBuilder(false);
+        sb = ci(false);
         sb.prependEveryNoWhite = AllStringsSE.space;
     }
 
-    public static PowershellBuilder Create()
+    public static PowershellBuilder Create(Func<bool, ITextBuilder> ci)
     {
-        return new PowershellBuilder();
+        return new PowershellBuilder(ci);
     }
 
     public void Clear()

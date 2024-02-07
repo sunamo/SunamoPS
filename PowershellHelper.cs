@@ -1,4 +1,5 @@
-using SunamoStringSplit;
+using SunamoPS._sunamo;
+using SunamoValues;
 
 namespace SunamoPS;
 
@@ -31,9 +32,9 @@ async Task
 #else
 void
 #endif
-CmdC(string v)
+CmdC(string v, Func<bool, ITextBuilder> ci)
     {
-        PowershellBuilder ps = PowershellBuilder.Create();
+        PowershellBuilder ps = PowershellBuilder.Create(ci);
         ps.CmdC(v);
 
 #if ASYNC

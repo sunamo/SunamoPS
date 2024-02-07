@@ -1,3 +1,5 @@
+using SunamoExceptions;
+
 namespace SunamoPS;
 
 public class PowershellRunnerBase

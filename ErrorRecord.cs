@@ -1,3 +1,5 @@
+using SunamoExceptions.OnlyInSE;
+
 namespace SunamoPS;
 
 public class ErrorRecordHelper

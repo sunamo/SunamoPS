@@ -1,8 +1,9 @@
 
-namespace SunamoPS;
-using SunamoStringGetLines;
-using SunamoThisApp;
+using SunamoExceptions;
+using SunamoExceptions.OnlyInSE;
+using SunamoPS._sunamo;
 
+namespace SunamoPS;
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
 {
     public ProgressState clpb { get; set; }
@@ -193,7 +194,8 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
                 {
                     if (!string.IsNullOrEmpty(item2))
                     {
-                        ThisApp.Info(item2);
+                        Console.WriteLine(item2);
+                        //ThisApp.Info(item2);
                     }
                 }
             }

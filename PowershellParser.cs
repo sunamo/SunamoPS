@@ -1,7 +1,8 @@
 
 namespace SunamoPS;
 
-using SunamoStringSplit;
+using SunamoPS._sunamo;
+using SunamoValues;
 using System.Text.RegularExpressions;
 
 
