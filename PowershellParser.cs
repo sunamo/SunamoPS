@@ -28,13 +28,13 @@ public class PowershellParser : IPowershellParser
         var b = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
         foreach (var item in b)
         {
-            sb = sb.Replace(item, item.Replace(AllStringsSE.space, charWhichIsNotContained));
+            sb = sb.Replace(item, item.Replace(AllStrings.space, charWhichIsNotContained));
         }
 
-        var p = SHSplit.Split(sb.ToString(), AllStringsSE.space);
+        var p = SHSplit.Split(sb.ToString(), AllStrings.space);
         for (int i = 0; i < p.Count; i++)
         {
-            p[i] = p[i].Replace(charWhichIsNotContained, AllStringsSE.space);
+            p[i] = p[i].Replace(charWhichIsNotContained, AllStrings.space);
         }
 
         return p;
