@@ -11,3 +11,6 @@ global using SunamoArgs;
 global using Newtonsoft.Json;
 global using System.Management.Automation;
 global using SunamoInterfaces.Interfaces.SunamoPS;
+global using System.Collections.Generic;
+global using System.Collections;
+
