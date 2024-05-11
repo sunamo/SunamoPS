@@ -1,4 +1,4 @@
-﻿namespace SunamoPS._sunamo;
+namespace SunamoPS;
 internal class SHGetLines
 {
     internal static List<string> GetLines(string v)

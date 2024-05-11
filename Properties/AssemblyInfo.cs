@@ -1,4 +1,4 @@
-namespace SunamoPS.Properties;
+namespace SunamoPS;
 
 //namespace SunamoPS.Properties;
 

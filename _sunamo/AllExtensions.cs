@@ -1,4 +1,4 @@
-﻿namespace SunamoPS._sunamo;
+namespace SunamoPS;
 internal class AllExtensions
 {
     internal static string exe = ".exe";

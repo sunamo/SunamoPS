@@ -1,6 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 
-namespace SunamoPS._sunamo;
+namespace SunamoPS;
 internal class DictionaryHelper
 {
     internal static void AddOrCreate<Key, Value>(IDictionary<Key, List<Value>> sl, Key key, Value value,

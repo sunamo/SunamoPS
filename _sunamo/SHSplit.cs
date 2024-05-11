@@ -1,4 +1,4 @@
-﻿namespace SunamoPS._sunamo;
+namespace SunamoPS;
 internal class SHSplit
 {
     internal static List<string> Split(string p, params string[] newLine)
