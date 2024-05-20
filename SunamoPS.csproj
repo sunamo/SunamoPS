@@ -17,6 +17,18 @@
     <Compile Include="..\SunamoValues\AllChars.cs" Link="_linked\SunamoValues\AllChars.cs" />
     <Compile Include="..\SunamoValues\AllStrings.cs" Link="_linked\SunamoValues\AllStrings.cs" />
     <Compile Include="..\SunamoValues\Consts.cs" Link="_linked\SunamoValues\Consts.cs" />
+    <Compile Include="..\SunamoExceptions\OnlyInSE\ThrowEx.cs" Link="_linked\SunamoExceptions\OnlyInSE\ThrowEx.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\ITextBuilder.cs" Link="_linked\SunamoInterfaces\Interfaces\ITextBuilder.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\INpmBashBuilder.cs" Link="_linked\SunamoInterfaces\Interfaces\INpmBashBuilder.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellBuilder.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellBuilder.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\IGitBashBuilder.cs" Link="_linked\SunamoInterfaces\Interfaces\IGitBashBuilder.cs" />
+    <Compile Include="..\SunamoEnums\Enums\CommandWithPath.cs" Link="_linked\SunamoEnums\Enums\CommandWithPath.cs" />
+    <Compile Include="..\SunamoArgs\PsInvokeArgs.cs" Link="_linked\SunamoArgs\PsInvokeArgs.cs" />
+    <Compile Include="..\SunamoArgs\InvokeProcessArgs.cs" Link="_linked\SunamoArgs\InvokeProcessArgs.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellParser.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellParser.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\ProgressState.cs" Link="_linked\SunamoInterfaces\Interfaces\ProgressState.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellRunner.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellRunner.cs" />
+    <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellHelper.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="7.4.1" />
