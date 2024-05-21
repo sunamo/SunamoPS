@@ -29,6 +29,7 @@
     <Compile Include="..\SunamoInterfaces\Interfaces\ProgressState.cs" Link="_linked\SunamoInterfaces\Interfaces\ProgressState.cs" />
     <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellRunner.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellRunner.cs" />
     <Compile Include="..\SunamoInterfaces\Interfaces\SunamoPS\IPowershellHelper.cs" Link="_linked\SunamoInterfaces\Interfaces\SunamoPS\IPowershellHelper.cs" />
+    <Compile Include="..\SunamoXlfKeys\XlfKeys.cs" Link="_linked\SunamoXlfKeys\XlfKeys.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="7.4.1" />
