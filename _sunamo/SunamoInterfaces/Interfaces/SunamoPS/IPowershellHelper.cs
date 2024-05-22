@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-public interface IPowershellHelper
+internal interface IPowershellHelper
 {
 #if ASYNC
     Task

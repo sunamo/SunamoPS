@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-public interface IGitBashBuilder
+internal interface IGitBashBuilder
 {
     List<string> Commands { get; }
     void Add(string v);
