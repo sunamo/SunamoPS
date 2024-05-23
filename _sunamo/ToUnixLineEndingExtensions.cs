@@ -1,9 +1,9 @@
 
 namespace SunamoPS;
 
-internal static partial class ToUnixLineEndingExtensions
+public static partial class ToUnixLineEndingExtensions
 {
-    internal static IList<string> ToUnixLineEnding(this IList<string> t)
+    public static IList<string> ToUnixLineEnding(this IList<string> t)
     {
         for (int i = 0; i < t.Count; i++)
         {
@@ -12,9 +12,9 @@ internal static partial class ToUnixLineEndingExtensions
         return t;
     }
 }
-internal static partial class StringExtensions
+public static partial class StringExtensions
 {
-    internal static string ToUnixLineEnding(this string s)
+    public static string ToUnixLineEnding(this string s)
     {
         return s.ReplaceLineEndings("\n");
     }

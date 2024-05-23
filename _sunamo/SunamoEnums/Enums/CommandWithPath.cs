@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal enum CommandWithPath
+public enum CommandWithPath
 {
     dos2unix
 }

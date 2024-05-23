@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal interface IPowershellBuilder
+public interface IPowershellBuilder
 {
     INpmBashBuilder Npm { get; set; }
     IGitBashBuilder Git { get; set; }
