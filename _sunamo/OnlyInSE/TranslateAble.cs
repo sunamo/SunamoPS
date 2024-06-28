@@ -1,3 +1,5 @@
+
+namespace SunamoPS;
 public class TranslateAble
 {
     
