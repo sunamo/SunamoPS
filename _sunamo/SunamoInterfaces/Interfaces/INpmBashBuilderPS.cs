@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal interface INpmBashBuilder
+public interface INpmBashBuilderPS
 {
     void I(string args = null);
 }

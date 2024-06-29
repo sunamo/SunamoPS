@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal class InvokeProcessArgs
+public class InvokeProcessArgsPS
 {
     internal string workingDir = null;
 }

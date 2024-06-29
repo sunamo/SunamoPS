@@ -8,7 +8,7 @@ internal interface IPowershellHelper
 #else
 void
 #endif
-    CmdC(string v, Func<bool, ITextBuilder> ciTextBuilder);
+    CmdC(string v, Func<bool, ITextBuilderPS> ciTextBuilder);
 #if ASYNC
     Task<string>
 #else

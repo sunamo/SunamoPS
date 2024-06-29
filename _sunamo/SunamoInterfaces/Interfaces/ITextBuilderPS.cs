@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal interface ITextBuilder
+public interface ITextBuilderPS
 {
     bool CanUndo { get; set; }
     List<string> list { get; set; }

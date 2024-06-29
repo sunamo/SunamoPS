@@ -6,7 +6,7 @@
 namespace SunamoPS;
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
 {
-    public ProgressState clpb { get; set; }
+    public ProgressStatePS clpb { get; set; }
     bool saveUsedCommandToDictionary = false;
 
     public bool SaveUsedCommandToDictionary
@@ -52,11 +52,11 @@ async Task<List<List<string>>>
 #else
 List<List<string>>
 #endif
-Invoke(List<string> commands, PsInvokeArgs e = null)
+Invoke(List<string> commands, PsInvokeArgsPS e = null)
     {
         if (e == null)
         {
-            e = new PsInvokeArgs();
+            e = new PsInvokeArgsPS();
         }
 
 
@@ -255,7 +255,7 @@ InvokeLinesFromString(string v, bool writePb)
 #if ASYNC
 await
 #endif
-Invoke(l, new PsInvokeArgs { writePb = writePb });
+Invoke(l, new PsInvokeArgsPS { writePb = writePb });
 
         StringBuilder sb = new StringBuilder();
 
@@ -281,11 +281,11 @@ async Task<List<string>>
 #else
 List<string>
 #endif
-InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs a = null)
+InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null)
     {
         if (a == null)
         {
-            a = new InvokeProcessArgs();
+            a = new InvokeProcessArgsPS();
         }
 
         // Its not working with .net6 so temporarily disable. Když to nebude fungovat musím vymyslet náhradní řešení.

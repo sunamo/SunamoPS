@@ -1,10 +1,10 @@
 namespace SunamoPS;
 
 
-internal interface IPowershellBuilder
+internal interface IPowershellBuilderPS
 {
-    INpmBashBuilder Npm { get; set; }
-    IGitBashBuilder Git { get; set; }
+    INpmBashBuilderPS Npm { get; set; }
+    IGitBashBuilderPS Git { get; set; }
     void AddArg(string argName, string argValue);
     void AddRaw(string v);
     void AddRawLine(string v);
@@ -29,5 +29,5 @@ internal interface IPowershellBuilder
     List<string> ToList();
     string ToString();
     void YtDlp(string url);
-    ITextBuilder sb { get; set; }
+    ITextBuilderPS sb { get; set; }
 }

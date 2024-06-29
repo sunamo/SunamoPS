@@ -32,7 +32,7 @@ async Task
 #else
 void
 #endif
-CmdC(string v, Func<bool, ITextBuilder> ci)
+CmdC(string v, Func<bool, ITextBuilderPS> ci)
     {
         PowershellBuilder ps = PowershellBuilder.Create(ci);
         ps.CmdC(v);

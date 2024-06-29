@@ -32,7 +32,7 @@ namespace SunamoPS;
 /// </summary>
 internal interface IPowershellRunner
 {
-    ProgressState clpb { get; set; }
+    ProgressStatePS clpb { get; set; }
     Task<List<string>> InvokeInFolder(string folder, string command);
 #if ASYNC
     Task<List<List<string>>>
@@ -54,7 +54,7 @@ List<string>
 #else
 List<List<string>>
 #endif
-    Invoke(List<string> commands, PsInvokeArgs e = null);
+    Invoke(List<string> commands, PsInvokeArgsPS e = null);
 #if ASYNC
     Task<string>
 #else
@@ -66,7 +66,7 @@ string
 #else
 List<string>
 #endif
-    InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs a = null);
+    InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null);
     #region Když to bylo instanční, nechtělo mi to z nějakého důvodu fungovat. Nastavilo se true ale vracelo se furt false
     bool SaveUsedCommandToDictionary { get; set; }
     Dictionary<string, List<string>> UsedCommandsInFolders { get; set; }

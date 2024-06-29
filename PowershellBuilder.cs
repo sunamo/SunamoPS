@@ -7,23 +7,23 @@ namespace SunamoPS;
 /// Potom mě napadlo že v asychronním programování to není dobrý nápad a "jako stejné" mě napadlo udělat metodu CreateInstance
 /// Nicméně zásada že nebudu měnit to co jsem napsal platí. Musím si prvně nastudovat jak je to s async. Kdy metoda může přistupovat 
 /// </summary>
-public class PowershellBuilder : IPowershellBuilder
+public class PowershellBuilder : IPowershellBuilderPS
 {
-    public ITextBuilder sb { get; set; } = null;
-    public IGitBashBuilder Git { get; set; }
-    public INpmBashBuilder Npm { get; set; }
+    public ITextBuilderPS sb { get; set; } = null;
+    public IGitBashBuilderPS Git { get; set; }
+    public INpmBashBuilderPS Npm { get; set; }
 
     /// <summary>
     /// musí být public aby šel vytvořit přes .Create
     /// </summary>
-    public PowershellBuilder(Func<bool, ITextBuilder> ci)
+    public PowershellBuilder(Func<bool, ITextBuilderPS> ci)
     {
         // 15.4.23 na false. čti public TextBuilder(bool useList = false) proč
         sb = ci(false);
         sb.prependEveryNoWhite = AllStrings.space;
     }
 
-    public static PowershellBuilder Create(Func<bool, ITextBuilder> ci)
+    public static PowershellBuilder Create(Func<bool, ITextBuilderPS> ci)
     {
         return new PowershellBuilder(ci);
     }

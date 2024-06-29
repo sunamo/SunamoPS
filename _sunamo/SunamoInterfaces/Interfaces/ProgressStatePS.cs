@@ -1,7 +1,7 @@
 namespace SunamoPS;
 
 
-internal class ProgressState
+public class ProgressStatePS
 {
     internal bool isRegistered { get; set; } = false;
     internal void Init(Action<int> OverallSongs, Action<int> AnotherSong, Action WriteProgressBarEnd)
