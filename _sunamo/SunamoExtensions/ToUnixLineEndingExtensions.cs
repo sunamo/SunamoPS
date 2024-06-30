@@ -1,7 +1,7 @@
 
 namespace SunamoPS;
 
-internal static partial class ToUnixLineEndingExtensions
+internal static class ToUnixLineEndingExtensions
 {
     internal static IList<string> ToUnixLineEnding(this IList<string> t)
     {
@@ -12,7 +12,7 @@ internal static partial class ToUnixLineEndingExtensions
         return t;
     }
 }
-internal static partial class StringExtensions
+internal static class StringExtensions
 {
     internal static string ToUnixLineEnding(this string s)
     {
