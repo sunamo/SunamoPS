@@ -1,9 +1,7 @@
-
 namespace SunamoPS;
 
 
 
-using System.Text.RegularExpressions;
 
 
 public class PowershellParser : IPowershellParser

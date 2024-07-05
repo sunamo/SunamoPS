@@ -1,6 +1,3 @@
-
-
-
 namespace SunamoPS;
 
 public class PowershellHelper : IPowershellHelper

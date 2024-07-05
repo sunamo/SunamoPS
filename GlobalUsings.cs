@@ -25,3 +25,5 @@ global using SunamoPS._public.SunamoInterfaces.Interfaces;
 global using SunamoPS._sunamo.SunamoExceptions.OnlyInSE;
 global using SunamoPS._sunamo.SunamoExceptions._AddedToAllCsproj;
 global using SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
+global using System.Net;
+global using System.Text.RegularExpressions;

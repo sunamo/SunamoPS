@@ -1,5 +1,3 @@
-
-
 namespace SunamoPS;
 
 public class PowershellRunnerBase
