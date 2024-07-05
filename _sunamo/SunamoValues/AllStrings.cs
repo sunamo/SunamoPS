@@ -1,5 +1,5 @@
 
-namespace SunamoPS;
+namespace SunamoPS._sunamo.SunamoValues;
 internal class AllStrings
 {
     internal const string dot = ".";

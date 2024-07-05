@@ -332,20 +332,25 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
         pProcess.WaitForExit();
 #endif
 
-
-
-
         var result = SHGetLines.GetLines(strOutput);
         return result;
     }
 
+    /// <summary>
+    /// Je to inteligentní - výstup cd příkazu nedává takže na [0] je výstup prvního příkazu
+    /// </summary>
+    /// <param name="folder"></param>
+    /// <param name="command"></param>
+    /// <returns></returns>
     public async Task<List<string>> InvokeInFolder(string folder, string command)
     {
         List<string> cmds = new(2);
         cmds.Add("cd " + folder);
         cmds.Add(command);
 
-        return (await Invoke(cmds))[1];
+        var output = await Invoke(cmds);
+
+        return output[0];
     }
 
     public Dictionary<string, List<string>> UsedCommandsInFolders { get; set; } = new Dictionary<string, List<string>>();

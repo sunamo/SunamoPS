@@ -1,4 +1,4 @@
-namespace SunamoPS;
+namespace SunamoPS._public.SunamoInterfaces.Interfaces;
 
 
 public interface IGitBashBuilderPS

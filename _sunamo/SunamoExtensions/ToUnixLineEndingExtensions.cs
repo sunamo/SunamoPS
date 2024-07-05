@@ -1,5 +1,5 @@
 
-namespace SunamoPS;
+namespace SunamoPS._sunamo.SunamoExtensions;
 
 internal static class ToUnixLineEndingExtensions
 {

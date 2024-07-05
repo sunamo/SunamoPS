@@ -1,4 +1,4 @@
-namespace SunamoPS;
+namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 
 
 //internal interface IPowershellRunner

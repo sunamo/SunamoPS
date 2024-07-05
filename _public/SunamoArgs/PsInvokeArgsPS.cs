@@ -1,4 +1,4 @@
-namespace SunamoPS;
+namespace SunamoPS._public.SunamoArgs;
 
 
 public class PsInvokeArgsPS
