@@ -1,9 +1,5 @@
 namespace SunamoPS;
 
-
-
-
-
 public class PowershellParser : IPowershellParser
 {
     Type type = typeof(PowershellParser);
@@ -29,7 +25,7 @@ public class PowershellParser : IPowershellParser
             sb = sb.Replace(item, item.Replace(AllStrings.space, charWhichIsNotContained));
         }
 
-        var p = SHSplit.Split(sb.ToString(), AllStrings.space);
+        var p = SHSplit.SplitMore(sb.ToString(), AllStrings.space);
         for (int i = 0; i < p.Count; i++)
         {
             p[i] = p[i].Replace(charWhichIsNotContained, AllStrings.space);

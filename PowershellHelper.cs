@@ -57,7 +57,7 @@ DetectLanguageForFileGithubLinguist(string windowsPath)
         StringBuilder linuxPath = new StringBuilder();
         linuxPath.Append("/mnt/");
         linuxPath.Append(windowsPath[0].ToString().ToLower());
-        var parts = SHSplit.Split(windowsPath, AllStrings.bs);
+        var parts = SHSplit.SplitMore(windowsPath, AllStrings.bs);
         for (int i = 1; i < parts.Count; i++)
         {
             linuxPath.Append("/" + parts[i]);
