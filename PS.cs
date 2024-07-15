@@ -2,6 +2,21 @@ namespace SunamoPS;
 
 public class PS
 {
+    public static string CallPowershellCommand(string command)
+    {
+        using (var process = new Process())
+        {
+            process.StartInfo.FileName = "powershell.exe";
+            process.StartInfo.Arguments = "-Command " + command;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            // Spusťte proces
+            process.Start();
+            // Zpracujte výstup
+            return process.StandardOutput.ReadToEnd();
+        }
+    }
+
     /// <summary>
     /// Tato metoda je zde proto abych moho využívat powershell i ze shared a jiných projektů z něj odvozených aniž bych musel importovat SunamoPS
     /// To stačí jen v assembly hlavního exe
