@@ -1,4 +1,5 @@
 namespace SunamoPS;
+
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
 {
     public ProgressStatePS clpb { get; set; }
@@ -47,11 +48,11 @@ async Task<List<List<string>>>
 #else
 List<List<string>>
 #endif
-Invoke(List<string> commands, PsInvokeArgsPS e = null)
+Invoke(List<string> commands, PsInvokeArgs e = null)
     {
         if (e == null)
         {
-            e = new PsInvokeArgsPS();
+            e = new PsInvokeArgs();
         }
 
 
@@ -250,7 +251,7 @@ InvokeLinesFromString(string v, bool writePb)
 #if ASYNC
 await
 #endif
-Invoke(l, new PsInvokeArgsPS { writePb = writePb });
+Invoke(l, new PsInvokeArgs { writePb = writePb });
 
         StringBuilder sb = new StringBuilder();
 

@@ -55,6 +55,6 @@ Invoke(List<string> commands)
 #if ASYNC
 await
 #endif
-Invoke(commands, new PsInvokeArgsPS { immediatelyToStatus = false });
+Invoke(commands, new PsInvokeArgs { immediatelyToStatus = false });
     }
 }

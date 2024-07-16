@@ -54,7 +54,7 @@ List<string>
 #else
 List<List<string>>
 #endif
-    Invoke(List<string> commands, PsInvokeArgsPS e = null);
+    Invoke(List<string> commands, PsInvokeArgs e = null);
 #if ASYNC
     Task<string>
 #else

@@ -1,9 +1,9 @@
 namespace SunamoPS._public.SunamoArgs;
 
 
-public class PsInvokeArgsPS
+public class PsInvokeArgs
 {
-    public static readonly PsInvokeArgsPS Def = new PsInvokeArgsPS();
+    public static readonly PsInvokeArgs Def = new PsInvokeArgs();
     public bool writePb = false;
     
     
