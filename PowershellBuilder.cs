@@ -7,21 +7,21 @@ namespace SunamoPS;
 /// </summary>
 public class PowershellBuilder : IPowershellBuilderPS
 {
-    public ITextBuilderPS sb { get; set; } = null;
+    public TextBuilderPS sb { get; set; } = null;
     public IGitBashBuilderPS Git { get; set; }
     public INpmBashBuilderPS Npm { get; set; }
 
     /// <summary>
     /// musí být public aby šel vytvořit přes .Create
     /// </summary>
-    public PowershellBuilder(Func<bool, ITextBuilderPS> ci)
+    public PowershellBuilder(Func<bool, TextBuilderPS> ci)
     {
         // 15.4.23 na false. čti public TextBuilder(bool useList = false) proč
         sb = ci(false);
         sb.prependEveryNoWhite = AllStrings.space;
     }
 
-    public static PowershellBuilder Create(Func<bool, ITextBuilderPS> ci)
+    public static PowershellBuilder Create(Func<bool, TextBuilderPS> ci)
     {
         return new PowershellBuilder(ci);
     }

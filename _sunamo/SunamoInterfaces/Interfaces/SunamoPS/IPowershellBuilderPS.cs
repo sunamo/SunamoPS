@@ -29,5 +29,5 @@ internal interface IPowershellBuilderPS
     List<string> ToList();
     string ToString();
     void YtDlp(string url);
-    ITextBuilderPS sb { get; set; }
+    TextBuilderPS sb { get; set; }
 }
