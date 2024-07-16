@@ -23,3 +23,6 @@ global using SunamoPS._sunamo.SunamoExceptions.OnlyInSE;
 global using SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 global using System.Net;
 global using System.Text.RegularExpressions;
+global using SunamoPS;
+global using SunamoPS._sunamo;
+global using SunamoPS._sunamo.SunamoXlfKeys;

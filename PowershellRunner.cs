@@ -346,7 +346,7 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
 
         var output = await Invoke(cmds);
 
-        return output[0];
+        return SHGetLines.GetLinesFromLinesWithOneRow(output[0]);
     }
 
     public Dictionary<string, List<string>> UsedCommandsInFolders { get; set; } = new Dictionary<string, List<string>>();
