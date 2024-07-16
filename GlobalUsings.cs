@@ -26,3 +26,4 @@ global using System.Text.RegularExpressions;
 global using SunamoPS;
 global using SunamoPS._sunamo;
 global using SunamoPS._sunamo.SunamoXlfKeys;
+global using SunamoPS._public;
