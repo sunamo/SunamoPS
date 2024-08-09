@@ -1,18 +1,16 @@
 namespace SunamoPS;
 
 /// <summary>
-/// Prvně jsem tu měl ci
-/// Potom mě napadlo že v asychronním programování to není dobrý nápad a "jako stejné" mě napadlo udělat metodu CreateInstance
-/// Nicméně zásada že nebudu měnit to co jsem napsal platí. Musím si prvně nastudovat jak je to s async. Kdy metoda může přistupovat 
+///     Prvně jsem tu měl ci
+///     Potom mě napadlo že v asychronním programování to není dobrý nápad a "jako stejné" mě napadlo udělat metodu
+///     CreateInstance
+///     Nicméně zásada že nebudu měnit to co jsem napsal platí. Musím si prvně nastudovat jak je to s async. Kdy metoda
+///     může přistupovat
 /// </summary>
 public class PowershellBuilder : IPowershellBuilderPS
 {
-    public TextBuilderPS sb { get; set; } = null;
-    public IGitBashBuilderPS Git { get; set; }
-    public INpmBashBuilderPS Npm { get; set; }
-
     /// <summary>
-    /// musí být public aby šel vytvořit přes .Create
+    ///     musí být public aby šel vytvořit přes .Create
     /// </summary>
     public PowershellBuilder(Func<bool, TextBuilderPS> ci)
     {
@@ -21,10 +19,9 @@ public class PowershellBuilder : IPowershellBuilderPS
         sb.prependEveryNoWhite = AllStrings.space;
     }
 
-    public static PowershellBuilder Create(Func<bool, TextBuilderPS> ci)
-    {
-        return new PowershellBuilder(ci);
-    }
+    public TextBuilderPS sb { get; set; }
+    public IGitBashBuilderPS Git { get; set; }
+    public INpmBashBuilderPS Npm { get; set; }
 
     public void Clear()
     {
@@ -32,9 +29,9 @@ public class PowershellBuilder : IPowershellBuilderPS
     }
 
     /// <summary>
-    /// Dont postfix with NewLine
-    /// Automatically prepend by space
-    /// Add to previous command, not create new!
+    ///     Dont postfix with NewLine
+    ///     Automatically prepend by space
+    ///     Add to previous command, not create new!
     /// </summary>
     /// <param name="v"></param>
     public void AddRaw(string v)
@@ -48,7 +45,6 @@ public class PowershellBuilder : IPowershellBuilderPS
     }
 
 
-
     public void AddArg(string argName, string argValue)
     {
         sb.Append(argName);
@@ -56,19 +52,18 @@ public class PowershellBuilder : IPowershellBuilderPS
     }
 
     /// <summary>
-    /// Returns string because of PowershellRunner
+    ///     Returns string because of PowershellRunner
     /// </summary>
     /// <param name="path"></param>
     public
-void
-Cd(string path)
+        void
+        Cd(string path)
     {
         sb.AppendLine("cd \"" + path + AllStrings.qm);
     }
 
     public void RemoveItem(string v)
     {
-
         sb.AppendLine("Remove-Item " + v + " -Force");
         sb.AppendLine();
     }
@@ -90,11 +85,16 @@ Cd(string path)
 
     public void WithPath(CommandWithPath c, string path)
     {
-        sb.AppendLine(c.ToString() + " '" + path + "'");
+        sb.AppendLine(c + " '" + path + "'");
     }
 
     public void YtDlp(string url)
     {
         sb.AppendLine("ytp " + url);
+    }
+
+    public static PowershellBuilder Create(Func<bool, TextBuilderPS> ci)
+    {
+        return new PowershellBuilder(ci);
     }
 }

@@ -2,19 +2,29 @@ namespace SunamoPS;
 
 public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
 {
+    /// <summary>
+    ///     Musím instanci vytvářet tady, ne v ctoru
+    /// </summary>
+    public static PowershellRunner ci = new();
+
+    private bool saveUsedCommandToDictionary;
+
+    private PowershellRunner()
+    {
+        // nevím proč to tu je, FS.InvokePs mi EveryLine nenašel. 15-4-23 zakomentováno
+        //FS.InvokePs = Invoke;
+    }
+
     public ProgressStatePS clpb { get; set; }
-    bool saveUsedCommandToDictionary = false;
 
     public bool SaveUsedCommandToDictionary
     {
         get { return saveUsedCommandToDictionary; }
         set
         {
-
 #if DEBUG
             if (value)
             {
-
             }
 #endif
 
@@ -23,51 +33,34 @@ public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
         }
     }
 
-    /// <summary>
-    /// Musím instanci vytvářet tady, ne v ctoru
-    /// </summary>
-    public static PowershellRunner ci = new PowershellRunner();
-
-    private PowershellRunner()
-    {
-        // nevím proč to tu je, FS.InvokePs mi EveryLine nenašel. 15-4-23 zakomentováno
-        //FS.InvokePs = Invoke;
-    }
-
 
     /// <summary>
-    /// Tested, working
-    /// For every command return at least one entry in result
-    ///
-    /// No nevím jestli funguje, dal jsem 4 příkazy a ze všech jsem dostal příkaz z prvního že neexistuje cmd let. možná musím bez profilu. profil není v c# podporovaný.
+    ///     Tested, working
+    ///     For every command return at least one entry in result
+    ///     No nevím jestli funguje, dal jsem 4 příkazy a ze všech jsem dostal příkaz z prvního že neexistuje cmd let. možná
+    ///     musím bez profilu. profil není v c# podporovaný.
     /// </summary>
     /// <param name="commands"></param>
     public
 #if ASYNC
-async Task<List<List<string>>>
+        async Task<List<List<string>>>
 #else
 List<List<string>>
 #endif
-Invoke(List<string> commands, PsInvokeArgs e = null)
+        Invoke(List<string> commands, PsInvokeArgs e = null)
     {
-        if (e == null)
-        {
-            e = new PsInvokeArgs();
-        }
+        if (e == null) e = new PsInvokeArgs();
 
 
-        bool fileExists = false;
+        var fileExists = false;
         if (e.pathToSaveLoadPsOutput != null && File.Exists(e.pathToSaveLoadPsOutput))
         {
             // todo zde podmínečně kontrolovat zda DEBUG je přítomen
             fileExists = true;
             var r = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(e.pathToSaveLoadPsOutput));
 
-            List<List<string>> r2 = new List<List<string>>(r.Count);
-            foreach (var item in r)
-            {
-                r2.Add(SHGetLines.GetLines(item));
-            }
+            var r2 = new List<List<string>>(r.Count);
+            foreach (var item in r) r2.Add(SHGetLines.GetLines(item));
 
             return r2;
         }
@@ -75,32 +68,24 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
 
         List<string> addBeforeEveryCommand = null;
 
-        bool removeFirst = false;
+        var removeFirst = false;
         foreach (var item in commands)
         {
             if (item.Trim().StartsWith("cd "))
             {
-                if (addBeforeEveryCommand == null)
-                {
-                    addBeforeEveryCommand = new List<string>();
-                }
+                if (addBeforeEveryCommand == null) addBeforeEveryCommand = new List<string>();
                 removeFirst = true;
                 addBeforeEveryCommand.Add(item);
             }
+
             break;
         }
 
-        if (removeFirst)
-        {
-            commands.RemoveAt(0);
-        }
+        if (removeFirst) commands.RemoveAt(0);
 
-        if (addBeforeEveryCommand != null)
-        {
-            e.addBeforeEveryCommand = addBeforeEveryCommand;
-        }
+        if (addBeforeEveryCommand != null) e.addBeforeEveryCommand = addBeforeEveryCommand;
 
-        List<List<string>> returnList = new List<List<string>>();
+        var returnList = new List<List<string>>();
         PowerShell ps = null;
         //  After leaving using is closed pipeline, must watch for complete or
 
@@ -118,7 +103,6 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
 
             if (item.Contains("git status"))
             {
-
             }
 #endif
 
@@ -126,12 +110,8 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
             using (ps = PowerShell.Create())
             {
                 if (e.addBeforeEveryCommand != null)
-                {
                     foreach (var item2 in e.addBeforeEveryCommand)
-                    {
                         ps = ps.AddScript(item2);
-                    }
-                }
 
                 ps = ps.AddScript(item).AddCommand("Out-String");
 
@@ -158,14 +138,10 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
 
                 if (ps.Streams.Error.Count > 0)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    var sb = new StringBuilder();
                     foreach (var item2 in ps.Streams.Error)
-                    {
                         if (item2 != null)
-                        {
                             ErrorRecordHelper.Text(sb, item2);
-                        }
-                    }
                     returnList.Add(new List<string>([sb.ToString().ToUnixLineEnding()]));
                 }
                 else
@@ -183,20 +159,11 @@ Invoke(List<string> commands, PsInvokeArgs e = null)
         //result.Wait();
         //var output = result.Result;
         if (e.immediatelyToStatus)
-        {
             foreach (var item in returnList)
-            {
-                foreach (var item2 in item)
-                {
-                    if (!string.IsNullOrEmpty(item2))
-                    {
-                        Console.WriteLine(item2);
-                        //ThisApp.Info(item2);
-                    }
-                }
-            }
-        }
-
+            foreach (var item2 in item)
+                if (!string.IsNullOrEmpty(item2))
+                    Console.WriteLine(item2);
+        //ThisApp.Info(item2);
         /*
 TOhle je zajímavé
 do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
@@ -208,57 +175,48 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
          */
 
         if (SaveUsedCommandToDictionary)
-        {
-            for (int i = 0; i < commands.Count; i++)
+            for (var i = 0; i < commands.Count; i++)
             {
                 var commandTrimmed = commands[i].Trim();
                 if (!commandTrimmed.StartsWith("cd "))
                 {
-                    DictionaryHelper.AddOrCreate(UsedCommandsInFolders, commandTrimmed, string.Join(Environment.NewLine, returnList[i]));
+                    DictionaryHelper.AddOrCreate(UsedCommandsInFolders, commandTrimmed,
+                        string.Join(Environment.NewLine, returnList[i]));
                     break;
                 }
             }
-        }
 
         if (!fileExists && e.pathToSaveLoadPsOutput != null)
         {
-            List<string> ls = new List<string>(returnList.Count);
-            foreach (var item in returnList)
-            {
-                ls.Add(string.Join(Environment.NewLine, item));
-            }
+            var ls = new List<string>(returnList.Count);
+            foreach (var item in returnList) ls.Add(string.Join(Environment.NewLine, item));
 
             await File.WriteAllTextAsync(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(ls));
         }
 
         return returnList;
-
     }
 
     public
 #if ASYNC
-async Task<string>
+        async Task<string>
 #else
 string
 #endif
-InvokeLinesFromString(string v, bool writePb)
+        InvokeLinesFromString(string v, bool writePb)
     {
         var l = SHGetLines.GetLines(v);
 
 
-
         var result =
 #if ASYNC
-await
+            await
 #endif
-Invoke(l, new PsInvokeArgs { writePb = writePb });
+                Invoke(l, new PsInvokeArgs { writePb = writePb });
 
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
 
-        foreach (var item in result)
-        {
-            sb.AppendLine(string.Join(Environment.NewLine, item).Trim());
-        }
+        foreach (var item in result) sb.AppendLine(string.Join(Environment.NewLine, item).Trim());
 
         var result2 = sb.ToString().Trim();
 
@@ -266,34 +224,28 @@ Invoke(l, new PsInvokeArgs { writePb = writePb });
     }
 
     /// <summary>
-    /// If in A1 will be full path specified = 'The system cannot find the file specified'
-    /// A1 if dont contains extension, append exe
+    ///     If in A1 will be full path specified = 'The system cannot find the file specified'
+    ///     A1 if dont contains extension, append exe
     /// </summary>
     /// <param name="exeFileNameWithoutPath"></param>
     /// <param name="arguments"></param>
     public
 #if ASYNC
-async Task<List<string>>
+        async Task<List<string>>
 #else
 List<string>
 #endif
-InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null)
+        InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null)
     {
-        if (a == null)
-        {
-            a = new InvokeProcessArgsPS();
-        }
+        if (a == null) a = new InvokeProcessArgsPS();
 
         // Its not working with .net6 so temporarily disable. Když to nebude fungovat musím vymyslet náhradní řešení.
         //W32.EnableWow64FSRedirection(false);
-        if (!exeFileNameWithoutPath.EndsWith(AllExtensions.exe))
-        {
-            exeFileNameWithoutPath += AllExtensions.exe;
-        }
+        if (!exeFileNameWithoutPath.EndsWith(AllExtensions.exe)) exeFileNameWithoutPath += AllExtensions.exe;
         //FS.AddExtensionIfDontHave(exeFileNameWithoutPath, AllExtensions.exe);
 
         //Create process
-        System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
+        var pProcess = new Process();
 
         // Must contains only filename, not full path
         pProcess.StartInfo.FileName = exeFileNameWithoutPath;
@@ -307,10 +259,7 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
         pProcess.StartInfo.RedirectStandardOutput = true;
 
         //Optional, recommended do not enter, then old value is not deleted and both paths is combined
-        if (a.workingDir != null)
-        {
-            pProcess.StartInfo.WorkingDirectory = a.workingDir;
-        }
+        if (a.workingDir != null) pProcess.StartInfo.WorkingDirectory = a.workingDir;
 
         //Start the process
         pProcess.Start();
@@ -318,7 +267,7 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
         //W32.EnableWow64FSRedirection(true);
 
         //Get program output
-        string strOutput = pProcess.StandardOutput.ReadToEnd();
+        var strOutput = pProcess.StandardOutput.ReadToEnd();
 
 #if ASYNC
         //Wait for process to finish
@@ -333,7 +282,7 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
     }
 
     /// <summary>
-    /// Je to inteligentní - výstup cd příkazu nedává takže na [0] je výstup prvního příkazu
+    ///     Je to inteligentní - výstup cd příkazu nedává takže na [0] je výstup prvního příkazu
     /// </summary>
     /// <param name="folder"></param>
     /// <param name="command"></param>
@@ -349,5 +298,5 @@ InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgs
         return SHGetLines.GetLinesFromLinesWithOneRow(output[0]);
     }
 
-    public Dictionary<string, List<string>> UsedCommandsInFolders { get; set; } = new Dictionary<string, List<string>>();
+    public Dictionary<string, List<string>> UsedCommandsInFolders { get; set; } = new();
 }

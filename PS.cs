@@ -18,8 +18,9 @@ public class PS
     }
 
     /// <summary>
-    /// Tato metoda je zde proto abych moho využívat powershell i ze shared a jiných projektů z něj odvozených aniž bych musel importovat SunamoPS
-    /// To stačí jen v assembly hlavního exe
+    ///     Tato metoda je zde proto abych moho využívat powershell i ze shared a jiných projektů z něj odvozených aniž bych
+    ///     musel importovat SunamoPS
+    ///     To stačí jen v assembly hlavního exe
     /// </summary>
     public static void Init()
     {
@@ -34,7 +35,7 @@ public class PS
         //PowershellRunner.p = Runner;
 
         /*
-         * Opravdu nechápu proč když jsem to všem udělal jako .p a .ci 
+         * Opravdu nechápu proč když jsem to všem udělal jako .p a .ci
          * to najednou chci u jednoho .ci.p a .GetInstance()
          * Vždycky musím mít na paměti že nemůžu nic měnit co už jsem jednou zapsal. Jedna změna vyvolá dalších X změn a potom nedělám nic jiného. Zamyslet se nad všemi důsledky.
          */

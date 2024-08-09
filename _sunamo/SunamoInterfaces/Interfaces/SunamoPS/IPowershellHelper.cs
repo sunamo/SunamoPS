@@ -1,6 +1,5 @@
 namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 
-
 internal interface IPowershellHelper
 {
 #if ASYNC
@@ -8,12 +7,13 @@ internal interface IPowershellHelper
 #else
 void
 #endif
-    CmdC(string v, Func<bool, TextBuilderPS> ciTextBuilder);
+        CmdC(string v, Func<bool, TextBuilderPS> ciTextBuilder);
 #if ASYNC
     Task<string>
 #else
 string
 #endif
-    DetectLanguageForFileGithubLinguist(string windowsPath);
+        DetectLanguageForFileGithubLinguist(string windowsPath);
+
     List<string> ProcessNames();
 }

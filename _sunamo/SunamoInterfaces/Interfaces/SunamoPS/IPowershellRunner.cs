@@ -1,6 +1,5 @@
 namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 
-
 //internal interface IPowershellRunner
 //{
 //    ProgressState clpb { get; set; }
@@ -25,10 +24,10 @@ namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 //    //List<string> ProcessPSObjects(ICollection<PSObject> pso);
 //}
 /// <summary>
-/// Invoke - more commands, just run InvokeWorker
-/// InvokeLinesFromString - more commands, with progress bar. Simply call InvokeWorker
-/// InvokeProcess - spustí proces ze kterého vrátí output
-/// InvokeSingle - just run InvokeWorker
+///     Invoke - more commands, just run InvokeWorker
+///     InvokeLinesFromString - more commands, with progress bar. Simply call InvokeWorker
+///     InvokeProcess - spustí proces ze kterého vrátí output
+///     InvokeSingle - just run InvokeWorker
 /// </summary>
 internal interface IPowershellRunner
 {
@@ -39,13 +38,13 @@ internal interface IPowershellRunner
 #else
 List<List<string>>
 #endif
-    Invoke(List<string> commands);
+        Invoke(List<string> commands);
 #if ASYNC
     Task<List<string>>
 #else
 List<string>
 #endif
-    InvokeSingle(string command);
+        InvokeSingle(string command);
     //List<List<string>> Invoke(IList<string> commands, PsInvokeArgs e);
     //List<string> Invoke(string commands);
     // zakomentoval jsem protože všechny 4 invoke pouze volají InvokeWorker
@@ -54,22 +53,26 @@ List<string>
 #else
 List<List<string>>
 #endif
-    Invoke(List<string> commands, PsInvokeArgs e = null);
+        Invoke(List<string> commands, PsInvokeArgs e = null);
 #if ASYNC
     Task<string>
 #else
 string
 #endif
-    InvokeLinesFromString(string v, bool writePb);
+        InvokeLinesFromString(string v, bool writePb);
 #if ASYNC
     Task<List<string>>
 #else
 List<string>
 #endif
-    InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null);
+        InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null);
+
     #region Když to bylo instanční, nechtělo mi to z nějakého důvodu fungovat. Nastavilo se true ale vracelo se furt false
+
     bool SaveUsedCommandToDictionary { get; set; }
     Dictionary<string, List<string>> UsedCommandsInFolders { get; set; }
+
     #endregion
+
     //List<string> ProcessPSObjects(ICollection<PSObject> pso);
 }

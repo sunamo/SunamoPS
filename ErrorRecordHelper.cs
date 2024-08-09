@@ -7,15 +7,9 @@ public class ErrorRecordHelper
 
     public static void Text(StringBuilder sb, ErrorRecord e)
     {
-        if (e == null)
-        {
-            return; // string.Empty;
-        }
+        if (e == null) return; // string.Empty;
 
-        if (e.ErrorDetails != null)
-        {
-            sb.AppendLine(e.ErrorDetails.Message);
-        }
+        if (e.ErrorDetails != null) sb.AppendLine(e.ErrorDetails.Message);
 
         sb.AppendLine(Exceptions.TextOfExceptions(e.Exception));
     }

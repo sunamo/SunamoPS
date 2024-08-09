@@ -1,6 +1,5 @@
 namespace SunamoPS._public.SunamoInterfaces.Interfaces;
 
-
 public interface IGitBashBuilderPS
 {
     List<string> Commands { get; }

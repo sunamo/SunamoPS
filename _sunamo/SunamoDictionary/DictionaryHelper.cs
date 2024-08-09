@@ -7,13 +7,14 @@ internal class DictionaryHelper
     {
         AddOrCreate<Key, Value, object>(sl, key, value, withoutDuplicitiesInValue, dictS);
     }
+
     internal static void AddOrCreate<Key, Value, ColType>(IDictionary<Key, List<Value>> dict, Key key, Value value,
         bool withoutDuplicitiesInValue = false, Dictionary<Key, List<string>> dictS = null)
     {
         var compWithString = false;
         if (dictS != null) compWithString = true;
 
-        if (key is IList && typeof(ColType) != typeof(Object))
+        if (key is IList && typeof(ColType) != typeof(object))
         {
             var keyE = key as IList<ColType>;
             var contains = false;
