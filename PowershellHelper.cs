@@ -56,7 +56,7 @@ string
         var linuxPath = new StringBuilder();
         linuxPath.Append("/mnt/");
         linuxPath.Append(windowsPath[0].ToString().ToLower());
-        var parts = SHSplit.SplitMore(windowsPath, AllStrings.bs);
+        var parts = SHSplit.SplitMore(windowsPath, "\"");
         for (var i = 1; i < parts.Count; i++) linuxPath.Append("/" + parts[i]);
 
         command = "wsl";

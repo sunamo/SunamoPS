@@ -16,7 +16,7 @@ public class PowershellBuilder : IPowershellBuilderPS
     {
         // 15.4.23 na false. čti public TextBuilder(bool useList = false) proč
         sb = ci(false);
-        sb.prependEveryNoWhite = AllStrings.space;
+        sb.prependEveryNoWhite = "";
     }
 
     public TextBuilderPS sb { get; set; }
@@ -39,7 +39,7 @@ public class PowershellBuilder : IPowershellBuilderPS
         sb.Append(v);
     }
 
-    public void AddRawLine(string v = Consts.se)
+    public void AddRawLine(string v = "")
     {
         sb.AppendLine(v);
     }
@@ -59,7 +59,7 @@ public class PowershellBuilder : IPowershellBuilderPS
         void
         Cd(string path)
     {
-        sb.AppendLine("cd \"" + path + AllStrings.qm);
+        sb.AppendLine("cd \"" + path + "\"");
     }
 
     public void RemoveItem(string v)

@@ -14,7 +14,7 @@ global using SunamoPS._sunamo.SunamoExtensions;
 global using SunamoPS._sunamo.SunamoFileExtensions;
 global using SunamoPS._sunamo.SunamoStringGetLines;
 global using SunamoPS._sunamo.SunamoStringSplit;
-global using SunamoPS._sunamo.SunamoValues;
+global using SunamoPS;
 global using SunamoPS._public.SunamoEnums.Enums;
 global using SunamoPS._public.SunamoInterfaces.Interfaces;
 global using SunamoPS._sunamo.SunamoExceptions;
