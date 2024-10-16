@@ -3,7 +3,7 @@ partial class ThrowEx
 {
     internal static string FullNameOfExecutedCode()
     {
-        var placeOfExc = Exceptions.PlaceOfException();
+        var placeOfExc = Exc.PlaceOfException();
         var f = FullNameOfExecutedCode(placeOfExc.Item1, placeOfExc.Item2, true);
         return f;
     }
@@ -13,7 +13,7 @@ partial class ThrowEx
         {
             var depth = 2;
             if (fromThrowEx) depth++;
-            methodName = Exceptions.CallingMethod(depth);
+            methodName = Exc.CallingMethod(depth);
         }
         string typeFullName;
         if (type is Type type2)
@@ -40,7 +40,7 @@ partial class ThrowEx
     {
         if (exception == null)
         {
-            System.Diagnostics.Debugger.Break();
+            Debugger.Break();
             if (reallyThrow)
             {
                 throw new Exception(exception);

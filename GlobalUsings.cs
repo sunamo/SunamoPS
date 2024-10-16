@@ -22,3 +22,4 @@ global using System.Text.RegularExpressions;
 global using SunamoPS._public;
 global using System.Reflection;
 global using System.Net;
+global using System.Diagnostics.CodeAnalysis;
