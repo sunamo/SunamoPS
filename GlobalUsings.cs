@@ -23,3 +23,5 @@ global using SunamoPS._public;
 global using System.Reflection;
 global using System.Net;
 global using System.Diagnostics.CodeAnalysis;
+global using SunamoPS;
+global using SunamoPS._sunamo;
