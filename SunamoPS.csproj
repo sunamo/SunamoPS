@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Version>24.11.11.1</Version>
@@ -16,7 +16,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Content Remove="C:\Users\r\.nuget\packages\sunamoxlf\23.12.9.1\contentFiles\any\net8.0\WinSec\Readme.txt" />
+    <Content Remove="C:\Users\r\.nuget\packages\sunamoxlf\23.12.9.1\contentFiles\any\net9.0\WinSec\Readme.txt" />
     <None Include="readme.md" Pack="True" PackagePath="." />
   </ItemGroup>
   <ItemGroup>
