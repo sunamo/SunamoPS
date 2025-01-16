@@ -119,6 +119,7 @@ string
 #endif
                 PowershellRunner.ci.InvokeProcess(command + ".exe", arguments);
 
+
         var line = lines.First(d => d.Contains(lang)); //CA.ReturnWhichContains(lines, lang).First();
         if (line == null) return null;
         var result = line.Replace(lang, string.Empty).Trim();
