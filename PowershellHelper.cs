@@ -5,8 +5,6 @@ using System.Management.Automation.Language;
 
 public class PowershellHelper : IPowershellHelper
 {
-
-
     private const string lang = "language:";
     public static PowershellHelper ci = new();
 
