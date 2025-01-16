@@ -25,3 +25,4 @@ global using System.Net;
 global using System.Diagnostics.CodeAnalysis;
 global using SunamoPS;
 global using SunamoPS._sunamo;
+global using SunamoPS.Data;

@@ -1,9 +1,67 @@
 namespace SunamoPS;
 
+using SunamoPS.Data;
+using System.Management.Automation.Language;
+
 public class PowershellHelper : IPowershellHelper
 {
+
+
     private const string lang = "language:";
     public static PowershellHelper ci = new();
+
+    public static string FindDuplicatedMethodsInPs1File(List<PowershellMethod> methodsNamesContents)
+    {
+        var grouped = methodsNamesContents.GroupBy(d => d.Name);
+        var ordered = grouped.OrderByDescending(d => d.Count());
+
+        StringBuilder sameContent = new();
+        StringBuilder differentContent = new();
+        StringBuilder noCheckForContent = new();
+
+        foreach (var method in ordered)
+        {
+            noCheckForContent.AppendLine($"{method.First().Name} on lines {string.Join(",", method.Select(d => d.Line).Order())}");
+        }
+
+        return noCheckForContent.ToString();
+    }
+
+    public static List<PowershellMethod> ParseMethods(string powerShellCode)
+    {
+        List<PowershellMethod> methodsNamesContents = new();
+
+        // Parsujeme PowerShell k�d
+        Token[] tokens;
+        ParseError[] errors;
+        ScriptBlockAst ast = Parser.ParseInput(powerShellCode, out tokens, out errors);
+
+        // Hled�me definice funkc�
+        var functionDefinitions = ast.FindAll(ast => ast is FunctionDefinitionAst, true);
+
+        // Proch�z�me definice funkc�
+        foreach (FunctionDefinitionAst functionDefinition in functionDefinitions)
+        {
+            // Z�sk�me n�zev funkce
+            string functionName = functionDefinition.Name;
+
+            string functionArgs = "";
+
+            var args = functionDefinition.Parameters;
+            if (args != null && args.Any())
+            {
+                var argsLine = args.Select(d => d.Name.ToString()).ToList();
+                functionArgs = "(" + string.Join(",", argsLine) + ")";
+            }
+
+            // Z�sk�me obsah funkce (t�lo funkce)
+            string functionBody = functionDefinition.Body.Extent.Text;
+
+            methodsNamesContents.Add(new(functionName + functionArgs, functionBody, functionDefinition.Body.Extent.StartLineNumber));
+        }
+
+        return methodsNamesContents;
+    }
 
     private PowershellHelper()
     {
