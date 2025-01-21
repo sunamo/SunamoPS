@@ -1,6 +1,6 @@
 namespace SunamoPS;
 
-public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
+public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner<List<string>>
 {
     /// <summary>
     ///     Musím instanci vytvářet tady, ne v ctoru
@@ -34,6 +34,7 @@ public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner
     }
 
 
+    #region IPowershellRunnerCommands
     /// <summary>
     ///     Tested, working
     ///     For every command return at least one entry in result
@@ -160,9 +161,9 @@ List<List<string>>
         //var output = result.Result;
         if (e.immediatelyToStatus)
             foreach (var item in returnList)
-            foreach (var item2 in item)
-                if (!string.IsNullOrEmpty(item2))
-                    Console.WriteLine(item2);
+                foreach (var item2 in item)
+                    if (!string.IsNullOrEmpty(item2))
+                        Console.WriteLine(item2);
         //ThisApp.Info(item2);
         /*
 TOhle je zajímavé
@@ -196,10 +197,13 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
 
         return returnList;
     }
+    #endregion
+
+
 
     public
 #if ASYNC
-        async Task<string>
+        async Task<List<string>>
 #else
 string
 #endif
@@ -220,8 +224,25 @@ string
 
         var result2 = sb.ToString().Trim();
 
-        return result2;
+        return SHGetLines.GetLines(result2);
     }
+
+    #region InvokeSingle
+    public
+#if ASYNC
+async Task<List<string>>
+#else
+  List<string>
+#endif
+InvokeSingle(string command)
+    {
+        return (
+#if ASYNC
+await
+#endif
+Invoke(new List<string>([command])))[0];
+    }
+    #endregion
 
     /// <summary>
     ///     If in A1 will be full path specified = 'The system cannot find the file specified'
