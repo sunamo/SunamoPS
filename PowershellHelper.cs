@@ -1,9 +1,60 @@
 namespace SunamoPS;
 
+using SunamoPS.Data;
+using System.Management.Automation.Language;
+
 public class PowershellHelper : IPowershellHelper
 {
     private const string lang = "language:";
     public static PowershellHelper ci = new();
+
+    public static string FindDuplicatedMethodsInPs1File(List<PowershellMethod> methodsNamesContents)
+    {
+        var grouped = methodsNamesContents.GroupBy(d => d.Name);
+        var ordered = grouped.OrderByDescending(d => d.Count());
+
+        StringBuilder sameContent = new();
+        StringBuilder differentContent = new();
+        StringBuilder noCheckForContent = new();
+
+        foreach (var method in ordered)
+        {
+            noCheckForContent.AppendLine($"{method.First().Name} on lines {string.Join(",", method.Select(d => d.Line).Order())}");
+        }
+
+        return noCheckForContent.ToString();
+    }
+
+    public static List<PowershellMethod> ParseMethods(string powerShellCode)
+    {
+        List<PowershellMethod> methodsNamesContents = new();
+
+        Token[] tokens;
+        ParseError[] errors;
+        ScriptBlockAst ast = Parser.ParseInput(powerShellCode, out tokens, out errors);
+
+        var functionDefinitions = ast.FindAll(ast => ast is FunctionDefinitionAst, true);
+
+        foreach (FunctionDefinitionAst functionDefinition in functionDefinitions)
+        {
+            string functionName = functionDefinition.Name;
+
+            string functionArgs = "";
+
+            var args = functionDefinition.Parameters;
+            if (args != null && args.Any())
+            {
+                var argsLine = args.Select(d => d.Name.ToString()).ToList();
+                functionArgs = "(" + string.Join(",", argsLine) + ")";
+            }
+
+            string functionBody = functionDefinition.Body.Extent.Text;
+
+            methodsNamesContents.Add(new(functionName + functionArgs, functionBody, functionDefinition.Body.Extent.StartLineNumber));
+        }
+
+        return methodsNamesContents;
+    }
 
     private PowershellHelper()
     {
@@ -67,6 +118,7 @@ string
             await
 #endif
                 PowershellRunner.ci.InvokeProcess(command + ".exe", arguments);
+
 
         var line = lines.First(d => d.Contains(lang)); //CA.ReturnWhichContains(lines, lang).First();
         if (line == null) return null;
