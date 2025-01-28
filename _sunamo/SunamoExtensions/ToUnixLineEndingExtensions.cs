@@ -2,11 +2,6 @@ namespace SunamoPS._sunamo.SunamoExtensions;
 
 internal static class ToUnixLineEndingExtensions
 {
-    internal static IList<string> ToUnixLineEnding(this IList<string> t)
-    {
-        for (var i = 0; i < t.Count; i++) t[i] = t[i].ToUnixLineEnding();
-        return t;
-    }
 }
 
 internal static class StringExtensions
