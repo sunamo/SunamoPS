@@ -3,6 +3,13 @@ using System.Threading.Tasks;
 
 public class PowershellRunnerString : IPowershellRunner<string>
 {
+    private PowershellRunnerString()
+    {
+
+    }
+
+    public static PowershellRunnerString ci = new();
+
     //public bool SaveUsedCommandToDictionary { get => PowershellRunner.ci.SaveUsedCommandToDictionary; set => PowershellRunner.ci.SaveUsedCommandToDictionary = value; }
     //public Dictionary<string, List<string>> UsedCommandsInFolders { get => PowershellRunner.ci.UsedCommandsInFolders; set => PowershellRunner.ci.UsedCommandsInFolders = value; }
 
