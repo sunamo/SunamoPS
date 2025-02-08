@@ -1,12 +1,7 @@
 namespace SunamoPS;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-internal class PowershellRunnerString : IPowershellRunner<string>
+public class PowershellRunnerString : IPowershellRunner<string>
 {
     //public bool SaveUsedCommandToDictionary { get => PowershellRunner.ci.SaveUsedCommandToDictionary; set => PowershellRunner.ci.SaveUsedCommandToDictionary = value; }
     //public Dictionary<string, List<string>> UsedCommandsInFolders { get => PowershellRunner.ci.UsedCommandsInFolders; set => PowershellRunner.ci.UsedCommandsInFolders = value; }
