@@ -1,6 +1,6 @@
 namespace SunamoPS;
 
-public partial class PowershellRunner : PowershellRunnerBase, IPowershellRunner<List<string>>
+public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>>
 {
     /// <summary>
     ///     Musím instanci vytvářet tady, ne v ctoru
@@ -137,7 +137,8 @@ List<List<string>>
                     //throw;
                 }
 
-                if (ps.Streams.Error.Count > 0)
+                PSDataCollection<ErrorRecord> errors = ps.Streams.Error;
+                if (errors.Count > 0)
                 {
                     var sb = new StringBuilder();
                     foreach (var item2 in ps.Streams.Error)

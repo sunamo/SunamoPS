@@ -24,3 +24,4 @@ global using System.Threading.Tasks;
 global using SunamoPS;
 global using SunamoPS.Data;
 global using SunamoPS._sunamo;
+global using SunamoPS.Extensions;
