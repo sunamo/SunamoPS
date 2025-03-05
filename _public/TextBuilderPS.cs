@@ -1,7 +1,4 @@
 namespace SunamoPS._public;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 public class TextBuilderPS
 {
@@ -10,9 +7,6 @@ public class TextBuilderPS
     private string _lastText = "";
     public StringBuilder sb = null;
     public string prependEveryNoWhite { get; set; } = string.Empty;
-
-
-
     public List<string> list { get; set; }
     private bool _useList = false;
     public void Clear()
@@ -30,13 +24,6 @@ public class TextBuilderPS
     {
         return new TextBuilderPS(useList);
     }
-
-
-
-
-
-
-
     public TextBuilderPS(bool useList = false)
     {
         _useList = useList;
@@ -138,10 +125,6 @@ public class TextBuilderPS
             sb.Append(prependEveryNoWhite + s + Environment.NewLine);
         }
     }
-
-
-
-
     public override string ToString()
     {
         if (_useList)
@@ -153,5 +136,4 @@ public class TextBuilderPS
             return sb.ToString();
         }
     }
-
 }
