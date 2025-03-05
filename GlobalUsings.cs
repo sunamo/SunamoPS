@@ -25,3 +25,8 @@ global using SunamoPS;
 global using SunamoPS.Data;
 global using SunamoPS._sunamo;
 global using SunamoPS.Extensions;
+
+global using System.Management.Automation.Language;
+global using ILogger = Microsoft.Extensions.Logging.ILogger;
+global using Microsoft.Extensions.Logging;
+global using NullLogger = Microsoft.Extensions.Logging.Abstractions.NullLogger;
