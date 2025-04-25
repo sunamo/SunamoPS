@@ -84,7 +84,7 @@ string
         var linuxPath = new StringBuilder();
         linuxPath.Append("/mnt/");
         linuxPath.Append(windowsPath[0].ToString().ToLower());
-        var parts = SHSplit.SplitMore(windowsPath, "\"");
+        var parts = SHSplit.Split(windowsPath, "\"");
         for (var i = 1; i < parts.Count; i++) linuxPath.Append("/" + parts[i]);
         command = "wsl";
         arguments = " bash -c \"github-linguist '" + linuxPath + "'\"";

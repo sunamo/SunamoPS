@@ -17,7 +17,7 @@ public class PowershellParser : IPowershellParser
         var b = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
         foreach (var item in b) sb = sb.Replace(item, item.Replace(" ", charWhichIsNotContained));
 
-        var p = SHSplit.SplitMore(sb.ToString(), " ");
+        var p = SHSplit.Split(sb.ToString(), " ");
         for (var i = 0; i < p.Count; i++) p[i] = p[i].Replace(charWhichIsNotContained, "");
 
         return p;
