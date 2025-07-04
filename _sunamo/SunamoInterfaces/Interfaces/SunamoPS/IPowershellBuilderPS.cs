@@ -14,6 +14,7 @@ internal interface IPowershellBuilderPS
     ///// Musí být i bez QS protože když pracuji s interfacem, do něj nejde default hodnota - možná jde, viz výše
     ///// </summary>
     //void AddRawLine();
+
     /// <summary>
     ///     dříve to vracelo string ale je to hovadina a zbytečně zmařený výkon
     /// </summary>
