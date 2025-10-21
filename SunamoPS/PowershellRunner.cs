@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoPS;
 
 public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>>
@@ -58,10 +61,10 @@ List<List<string>>
         {
             // todo zde podmínečně kontrolovat zda DEBUG je přítomen
             fileExists = true;
-            var r = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(e.pathToSaveLoadPsOutput));
+            var result = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(e.pathToSaveLoadPsOutput));
 
-            var r2 = new List<List<string>>(r.Count);
-            foreach (var item in r) r2.Add(SHGetLines.GetLines(item));
+            var r2 = new List<List<string>>(result.Count);
+            foreach (var item in result) r2.Add(SHGetLines.GetLines(item));
 
             return r2;
         }
@@ -140,11 +143,11 @@ List<List<string>>
                 PSDataCollection<ErrorRecord> errors = ps.Streams.Error;
                 if (errors.Count > 0)
                 {
-                    var sb = new StringBuilder();
+                    var stringBuilder = new StringBuilder();
                     foreach (var item2 in ps.Streams.Error)
                         if (item2 != null)
-                            ErrorRecordHelper.Text(sb, item2);
-                    returnList.Add(new List<string>([sb.ToString().ToUnixLineEnding()]));
+                            ErrorRecordHelper.Text(stringBuilder, item2);
+                    returnList.Add(new List<string>([stringBuilder.ToString().ToUnixLineEnding()]));
                 }
                 else
                 {
@@ -190,10 +193,10 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
 
         if (!fileExists && e.pathToSaveLoadPsOutput != null)
         {
-            var ls = new List<string>(returnList.Count);
-            foreach (var item in returnList) ls.Add(string.Join(Environment.NewLine, item));
+            var sourceList = new List<string>(returnList.Count);
+            foreach (var item in returnList) sourceList.Add(string.Join(Environment.NewLine, item));
 
-            await File.WriteAllTextAsync(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(ls));
+            await File.WriteAllTextAsync(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(sourceList));
         }
 
         return returnList;
@@ -210,20 +213,20 @@ string
 #endif
         InvokeLinesFromString(string v, bool writePb)
     {
-        var l = SHGetLines.GetLines(v);
+        var list = SHGetLines.GetLines(v);
 
 
         var result =
 #if ASYNC
             await
 #endif
-                Invoke(l, new PsInvokeArgs { writePb = writePb });
+                Invoke(list, new PsInvokeArgs { writePb = writePb });
 
-        var sb = new StringBuilder();
+        var stringBuilder = new StringBuilder();
 
-        foreach (var item in result) sb.AppendLine(string.Join(Environment.NewLine, item).Trim());
+        foreach (var item in result) stringBuilder.AppendLine(string.Join(Environment.NewLine, item).Trim());
 
-        var result2 = sb.ToString().Trim();
+        var result2 = stringBuilder.ToString().Trim();
 
         return SHGetLines.GetLines(result2);
     }

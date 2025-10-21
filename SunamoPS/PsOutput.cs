@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoPS;
 
 public class PsOutput
@@ -19,20 +22,20 @@ public class PsOutput
     public static List<string> ProcessErrorRecords(PSDataCollection<ErrorRecord> errors)
     {
         List<string> result = new List<string>();
-        StringBuilder sb = new();
+        StringBuilder stringBuilder = new();
         foreach (var item in errors)
         {
-            AddErrorRecord(sb, item);
-            result.Add(sb.ToString());
+            AddErrorRecord(stringBuilder, item);
+            result.Add(stringBuilder.ToString());
         }
         return result;
     }
-    private static void AddErrorRecord(StringBuilder sb, ErrorRecord e)
+    private static void AddErrorRecord(StringBuilder stringBuilder, ErrorRecord e)
     {
-        sb.Clear();
+        stringBuilder.Clear();
         if (e == null) return; // string.Empty;
-        if (e.ErrorDetails != null) sb.AppendLine(e.ErrorDetails.Message);
-        sb.AppendLine(e.Exception.GetAllMessages());
+        if (e.ErrorDetails != null) stringBuilder.AppendLine(e.ErrorDetails.Message);
+        stringBuilder.AppendLine(e.Exception.GetAllMessages());
     }
     public static List<string> ProcessPSObjects(ICollection<PSObject> pso)
     {

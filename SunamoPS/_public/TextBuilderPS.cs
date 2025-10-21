@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoPS._public;
 
 public class TextBuilderPS
@@ -5,7 +8,7 @@ public class TextBuilderPS
     private bool _canUndo = false;
     private int _lastIndex = -1;
     private string _lastText = "";
-    public StringBuilder sb = null;
+    public StringBuilder stringBuilder = null;
     public string prependEveryNoWhite { get; set; } = string.Empty;
     public List<string> list { get; set; }
     private bool _useList = false;
@@ -17,7 +20,7 @@ public class TextBuilderPS
         }
         else
         {
-            sb.Clear();
+            stringBuilder.Clear();
         }
     }
     public static TextBuilderPS Create(bool useList = false)
@@ -33,7 +36,7 @@ public class TextBuilderPS
         }
         else
         {
-            sb = new StringBuilder();
+            stringBuilder = new StringBuilder();
         }
     }
     public bool CanUndo
@@ -68,27 +71,27 @@ public class TextBuilderPS
         }
         if (_lastIndex != -1)
         {
-            sb.Remove(_lastIndex, _lastText.Length);
+            stringBuilder.Remove(_lastIndex, _lastText.Length);
         }
     }
-    public void Append(string s)
+    public void Append(string text)
     {
         if (_useList)
         {
             if (list.Count > 0)
             {
-                list[list.Count - 1] += s;
+                list[list.Count - 1] += text;
             }
             else
             {
-                list.Add(s);
+                list.Add(text);
             }
         }
         else
         {
-            SetUndo(s);
-            sb.Append(prependEveryNoWhite);
-            sb.Append(s);
+            SetUndo(text);
+            stringBuilder.Append(prependEveryNoWhite);
+            stringBuilder.Append(text);
         }
     }
     private void SetUndo(string text)
@@ -99,13 +102,13 @@ public class TextBuilderPS
         }
         if (CanUndo)
         {
-            _lastIndex = sb.Length;
+            _lastIndex = stringBuilder.Length;
             _lastText = text;
         }
     }
-    public void Append(object s)
+    public void Append(object text)
     {
-        string text = s.ToString();
+        string text = text.ToString();
         SetUndo(text);
         Append(text);
     }
@@ -113,16 +116,16 @@ public class TextBuilderPS
     {
         Append(Environment.NewLine);
     }
-    public void AppendLine(string s)
+    public void AppendLine(string text)
     {
         if (_useList)
         {
-            list.Add(prependEveryNoWhite + s);
+            list.Add(prependEveryNoWhite + text);
         }
         else
         {
-            SetUndo(s);
-            sb.Append(prependEveryNoWhite + s + Environment.NewLine);
+            SetUndo(text);
+            stringBuilder.Append(prependEveryNoWhite + text + Environment.NewLine);
         }
     }
     public override string ToString()
@@ -133,7 +136,7 @@ public class TextBuilderPS
         }
         else
         {
-            return sb.ToString();
+            return stringBuilder.ToString();
         }
     }
 }

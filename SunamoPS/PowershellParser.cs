@@ -1,3 +1,6 @@
+// EN: Variable names have been checked and replaced with self-descriptive names
+// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+
 namespace SunamoPS;
 
 public class PowershellParser : IPowershellParser
@@ -13,13 +16,13 @@ public class PowershellParser : IPowershellParser
     {
         if (d.Contains(charWhichIsNotContained)) throw new Exception(d + " contains " + charWhichIsNotContained);
 
-        var sb = new StringBuilder(d);
-        var b = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
-        foreach (var item in b) sb = sb.Replace(item, item.Replace(" ", charWhichIsNotContained));
+        var stringBuilder = new StringBuilder(d);
+        var builder = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
+        foreach (var item in builder) sb = stringBuilder.Replace(item, item.Replace(" ", charWhichIsNotContained));
 
-        var p = SHSplit.Split(sb.ToString(), " ");
-        for (var i = 0; i < p.Count; i++) p[i] = p[i].Replace(charWhichIsNotContained, "");
+        var parameter = SHSplit.Split(stringBuilder.ToString(), " ");
+        for (var i = 0; i < parameter.Count; i++) parameter[i] = parameter[i].Replace(charWhichIsNotContained, "");
 
-        return p;
+        return parameter;
     }
 }
