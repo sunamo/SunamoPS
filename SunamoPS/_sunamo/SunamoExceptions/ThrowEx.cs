@@ -1,6 +1,5 @@
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
 namespace SunamoPS._sunamo.SunamoExceptions;
+
 using Debugger = System.Diagnostics.Debugger;
 
 internal partial class ThrowEx

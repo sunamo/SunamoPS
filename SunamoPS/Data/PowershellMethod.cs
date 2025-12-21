@@ -1,6 +1,7 @@
+namespace SunamoPS.Data;
+
 // EN: Variable names have been checked and replaced with self-descriptive names
 // CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
-﻿namespace SunamoPS.Data;
 public class PowershellMethod
 {
     public PowershellMethod(string name, string content, int line)

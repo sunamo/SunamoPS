@@ -1,3 +1,4 @@
+// variables names: ok
 namespace SunamoPS._public.SunamoEnums.Enums;
 
 public enum CommandWithPath
