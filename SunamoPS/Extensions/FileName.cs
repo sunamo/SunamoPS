@@ -1,19 +1,27 @@
 namespace SunamoPS.Extensions;
 
+/// <summary>
+/// Extension methods for Exception objects.
+/// </summary>
 public static class ExceptionsExtensions
 {
-    public static string GetAllMessages(this Exception ex)
+    /// <summary>
+    /// Gets the exception message including all inner exception messages.
+    /// </summary>
+    /// <param name="exception">Exception to extract messages from.</param>
+    /// <returns>Combined message string from the exception and all inner exceptions.</returns>
+    public static string GetAllMessages(this Exception exception)
     {
-        if (ex == null)
+        if (exception == null)
         {
             return "";
         }
 
-        string message = ex.Message;
+        string message = exception.Message;
 
-        if (ex.InnerException != null)
+        if (exception.InnerException != null)
         {
-            message += Environment.NewLine + "Inner Exception: " + ex.InnerException.GetAllMessages();
+            message += Environment.NewLine + "Inner Exception: " + exception.InnerException.GetAllMessages();
         }
 
         return message;

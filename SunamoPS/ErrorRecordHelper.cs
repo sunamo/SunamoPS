@@ -1,16 +1,21 @@
 namespace SunamoPS;
 
+/// <summary>
+/// Helper for formatting PowerShell ErrorRecord objects into readable text.
+/// </summary>
 public class ErrorRecordHelper
 {
-    // ErrorRecord + Exc here
-    // Zjistit proč mi to např u @"C:\repos\_\Bobril_Projects\_tutorials\BobrilYt\" nezobrazuje nikdy nic ač ps konzole vypisuje něco
-
-    public static void Text(StringBuilder sb, ErrorRecord e)
+    /// <summary>
+    /// Appends the error details and exception messages from an ErrorRecord to the StringBuilder.
+    /// </summary>
+    /// <param name="stringBuilder">StringBuilder to append error text to.</param>
+    /// <param name="errorRecord">ErrorRecord to extract messages from.</param>
+    public static void Text(StringBuilder stringBuilder, ErrorRecord errorRecord)
     {
-        if (e == null) return; // string.Empty;
+        if (errorRecord == null) return;
 
-        if (e.ErrorDetails != null) sb.AppendLine(e.ErrorDetails.Message);
+        if (errorRecord.ErrorDetails != null) stringBuilder.AppendLine(errorRecord.ErrorDetails.Message);
 
-        sb.AppendLine(Exceptions.TextOfExceptions(e.Exception));
+        stringBuilder.AppendLine(Exceptions.TextOfExceptions(errorRecord.Exception));
     }
 }

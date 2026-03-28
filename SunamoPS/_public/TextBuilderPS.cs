@@ -1,139 +1,203 @@
 namespace SunamoPS._public;
 
+/// <summary>
+/// Text builder that supports both StringBuilder and List-based modes for constructing PowerShell commands.
+/// </summary>
 public class TextBuilderPS
 {
-    private bool _canUndo = false;
-    private int _lastIndex = -1;
-    private string _lastText = "";
-    public StringBuilder stringBuilder = null;
-    public string prependEveryNoWhite { get; set; } = string.Empty;
-    public List<string> list { get; set; }
-    private bool _useList = false;
+    private bool canUndo = false;
+    private int lastIndex = -1;
+    private string lastText = "";
+    private bool isUsingList = false;
+
+    /// <summary>
+    /// Gets or sets the underlying StringBuilder instance. Null when using list mode.
+    /// </summary>
+    public StringBuilder? StringBuilder { get; set; } = null;
+
+    /// <summary>
+    /// Gets or sets the text to prepend before every non-whitespace append.
+    /// </summary>
+    public string PrependEveryNoWhite { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the list of command strings. Used in list mode.
+    /// </summary>
+    public List<string>? List { get; set; }
+
+    /// <summary>
+    /// Clears all accumulated content.
+    /// </summary>
     public void Clear()
     {
-        if (_useList)
+        if (isUsingList)
         {
-            list.Clear();
+            List?.Clear();
         }
         else
         {
-            stringBuilder.Clear();
+            StringBuilder?.Clear();
         }
     }
-    public static TextBuilderPS Create(bool useList = false)
+
+    /// <summary>
+    /// Creates a new TextBuilderPS instance.
+    /// </summary>
+    /// <param name="isUsingList">Whether to use list mode instead of StringBuilder mode.</param>
+    /// <returns>New TextBuilderPS instance.</returns>
+    public static TextBuilderPS Create(bool isUsingList = false)
     {
-        return new TextBuilderPS(useList);
+        return new TextBuilderPS(isUsingList);
     }
-    public TextBuilderPS(bool useList = false)
+
+    /// <summary>
+    /// Initializes a new instance of TextBuilderPS.
+    /// </summary>
+    /// <param name="isUsingList">Whether to use list mode instead of StringBuilder mode.</param>
+    public TextBuilderPS(bool isUsingList = false)
     {
-        _useList = useList;
-        if (useList)
+        this.isUsingList = isUsingList;
+        if (isUsingList)
         {
-            list = new List<string>();
+            List = new List<string>();
         }
         else
         {
-            stringBuilder = new StringBuilder();
+            StringBuilder = new StringBuilder();
         }
     }
+
+    /// <summary>
+    /// Gets or sets whether undo is enabled. When disabled, resets undo state.
+    /// </summary>
     public bool CanUndo
     {
         get
         {
-            if (_useList)
+            if (isUsingList)
             {
                 return false;
             }
-            return _canUndo;
+            return canUndo;
         }
         set
         {
-            _canUndo = value;
+            canUndo = value;
             if (!value)
             {
-                _lastIndex = -1;
-                _lastText = "";
+                lastIndex = -1;
+                lastText = "";
             }
         }
     }
+
     private void UndoIsNotAllowed(string what)
     {
         ThrowEx.IsNotAllowed(what);
     }
+
+    /// <summary>
+    /// Undoes the last append operation. Only supported in StringBuilder mode.
+    /// </summary>
     public void Undo()
     {
-        if (_useList)
+        if (isUsingList)
         {
             UndoIsNotAllowed("Undo");
         }
-        if (_lastIndex != -1)
+        if (lastIndex != -1 && StringBuilder != null)
         {
-            stringBuilder.Remove(_lastIndex, _lastText.Length);
+            StringBuilder.Remove(lastIndex, lastText.Length);
         }
     }
+
+    /// <summary>
+    /// Appends text without a trailing newline.
+    /// </summary>
+    /// <param name="text">Text to append.</param>
     public void Append(string text)
     {
-        if (_useList)
+        if (isUsingList)
         {
-            if (list.Count > 0)
+            if (List != null && List.Count > 0)
             {
-                list[list.Count - 1] += text;
+                List[List.Count - 1] += text;
             }
             else
             {
-                list.Add(text);
+                List?.Add(text);
             }
         }
         else
         {
             SetUndo(text);
-            stringBuilder.Append(prependEveryNoWhite);
-            stringBuilder.Append(text);
+            StringBuilder?.Append(PrependEveryNoWhite);
+            StringBuilder?.Append(text);
         }
     }
+
     private void SetUndo(string text)
     {
-        if (_useList)
+        if (isUsingList)
         {
             UndoIsNotAllowed("SetUndo");
         }
-        if (CanUndo)
+        if (CanUndo && StringBuilder != null)
         {
-            _lastIndex = stringBuilder.Length;
-            _lastText = text;
+            lastIndex = StringBuilder.Length;
+            lastText = text;
         }
     }
-    public void Append(object text)
+
+    /// <summary>
+    /// Appends an object's string representation.
+    /// </summary>
+    /// <param name="value">Object to append.</param>
+    public void Append(object value)
     {
-        string textString = text.ToString();
+        string textString = value.ToString() ?? string.Empty;
         SetUndo(textString);
         Append(textString);
     }
+
+    /// <summary>
+    /// Appends a newline.
+    /// </summary>
     public void AppendLine()
     {
         Append(Environment.NewLine);
     }
+
+    /// <summary>
+    /// Appends text followed by a newline.
+    /// </summary>
+    /// <param name="text">Text to append as a line.</param>
     public void AppendLine(string text)
     {
-        if (_useList)
+        if (isUsingList)
         {
-            list.Add(prependEveryNoWhite + text);
+            List?.Add(PrependEveryNoWhite + text);
         }
         else
         {
             SetUndo(text);
-            stringBuilder.Append(prependEveryNoWhite + text + Environment.NewLine);
+            StringBuilder?.Append(PrependEveryNoWhite + text + Environment.NewLine);
         }
     }
+
+    /// <summary>
+    /// Returns the accumulated text as a string.
+    /// </summary>
+    /// <returns>String representation of accumulated content.</returns>
     public override string ToString()
     {
-        if (_useList)
+        if (isUsingList)
         {
-            return string.Join(Environment.NewLine, list);
+            return string.Join(Environment.NewLine, List ?? new List<string>());
         }
         else
         {
-            return stringBuilder.ToString();
+            return StringBuilder?.ToString() ?? string.Empty;
         }
     }
 }

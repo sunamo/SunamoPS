@@ -1,6 +1,12 @@
 namespace SunamoPS._sunamo.SunamoFileExtensions;
 
+/// <summary>
+/// Common file extension constants.
+/// </summary>
 internal class AllExtensions
 {
-    internal static string exe = ".exe";
+    /// <summary>
+    /// The .exe file extension.
+    /// </summary>
+    internal static string Exe = ".exe";
 }

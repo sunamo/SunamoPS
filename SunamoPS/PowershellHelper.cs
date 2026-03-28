@@ -1,53 +1,76 @@
 namespace SunamoPS;
 
+/// <summary>
+/// Helper class providing PowerShell utility methods for process listing, language detection, and script parsing.
+/// </summary>
 public class PowershellHelper : IPowershellHelper
 {
-    private const string lang = "language:";
-    public static PowershellHelper ci = new();
-    public static string FindDuplicatedMethodsInPs1File(List<PowershellMethod> methodsNamesContents)
+    private const string languagePrefix = "language:";
+
+    /// <summary>
+    /// Singleton instance of PowershellHelper.
+    /// </summary>
+    public static PowershellHelper Instance { get; } = new();
+
+    /// <summary>
+    /// Finds duplicated method names in a parsed PowerShell script.
+    /// </summary>
+    /// <param name="methods">List of parsed PowerShell methods.</param>
+    /// <returns>Formatted string listing method names and their line numbers.</returns>
+    public static string FindDuplicatedMethodsInPs1File(List<PowershellMethod> methods)
     {
-        var grouped = methodsNamesContents.GroupBy(d => d.Name);
-        var ordered = grouped.OrderByDescending(d => d.Count());
-        StringBuilder sameContent = new();
-        StringBuilder differentContent = new();
-        StringBuilder noCheckForContent = new();
-        foreach (var method in ordered)
+        var grouped = methods.GroupBy(method => method.Name);
+        var ordered = grouped.OrderByDescending(group => group.Count());
+        StringBuilder resultBuilder = new();
+        foreach (var methodGroup in ordered)
         {
-            noCheckForContent.AppendLine($"{method.First().Name} on lines {string.Join(",", method.Select(d => d.Line).Order())}");
+            resultBuilder.AppendLine($"{methodGroup.First().Name} on lines {string.Join(",", methodGroup.Select(method => method.Line).Order())}");
         }
-        return noCheckForContent.ToString();
+        return resultBuilder.ToString();
     }
+
+    /// <summary>
+    /// Parses PowerShell code into a list of method definitions with their names, bodies, and line numbers.
+    /// </summary>
+    /// <param name="powerShellCode">PowerShell source code to parse.</param>
+    /// <returns>List of parsed PowerShell methods.</returns>
     public static List<PowershellMethod> ParseMethods(string powerShellCode)
     {
-        List<PowershellMethod> methodsNamesContents = new();
+        List<PowershellMethod> methods = new();
         Token[] tokens;
         ParseError[] errors;
-        ScriptBlockAst ast = Parser.ParseInput(powerShellCode, out tokens, out errors);
-        var functionDefinitions = ast.FindAll(ast => ast is FunctionDefinitionAst, true);
+        ScriptBlockAst scriptBlockAst = Parser.ParseInput(powerShellCode, out tokens, out errors);
+        var functionDefinitions = scriptBlockAst.FindAll(node => node is FunctionDefinitionAst, true);
         foreach (FunctionDefinitionAst functionDefinition in functionDefinitions)
         {
             string functionName = functionDefinition.Name;
-            string functionArgs = "";
-            var args = functionDefinition.Parameters;
-            if (args != null && args.Any())
+            string functionArguments = "";
+            var parameters = functionDefinition.Parameters;
+            if (parameters != null && parameters.Any())
             {
-                var argsLine = args.Select(d => d.Name.ToString()).ToList();
-                functionArgs = "(" + string.Join(",", argsLine) + ")";
+                var parameterNames = parameters.Select(parameter => parameter.Name.ToString()).ToList();
+                functionArguments = "(" + string.Join(",", parameterNames) + ")";
             }
             string functionBody = functionDefinition.Body.Extent.Text;
-            methodsNamesContents.Add(new(functionName + functionArgs, functionBody, functionDefinition.Body.Extent.StartLineNumber));
+            methods.Add(new(functionName + functionArguments, functionBody, functionDefinition.Body.Extent.StartLineNumber));
         }
-        return methodsNamesContents;
+        return methods;
     }
+
     private PowershellHelper()
     {
     }
+
+    /// <summary>
+    /// Gets the names of all currently running processes.
+    /// </summary>
+    /// <returns>List of process names.</returns>
     public List<string> ProcessNames()
     {
         var processNames = new List<string>();
-        var ps = PowerShell.Create();
-        ps.AddCommand("Get-Process");
-        var processes = ps.Invoke();
+        var powerShell = PowerShell.Create();
+        powerShell.AddCommand("Get-Process");
+        var processes = powerShell.Invoke();
         foreach (var item in processes)
         {
             var process = (Process)item.BaseObject;
@@ -55,47 +78,57 @@ public class PowershellHelper : IPowershellHelper
         }
         return processNames;
     }
+
+    /// <summary>
+    /// Executes a command via cmd /c in a PowerShell session.
+    /// </summary>
+    /// <param name="command">Command to execute.</param>
+    /// <param name="textBuilderFactory">Factory function for creating a TextBuilderPS.</param>
     public
 #if ASYNC
         async Task
 #else
 void
 #endif
-        CmdC(string v, Func<bool, TextBuilderPS> ci)
+        CmdC(string command, Func<bool, TextBuilderPS> textBuilderFactory)
     {
-        var ps = PowershellBuilder.Create(ci);
-        ps.CmdC(v);
+        var builder = PowershellBuilder.Create(textBuilderFactory);
+        builder.CmdC(command);
 #if ASYNC
         await
 #endif
-            PowershellRunner.ci.Invoke(ps.ToList());
+            PowershellRunner.Instance.Invoke(builder.ToList());
     }
+
+    /// <summary>
+    /// Detects the programming language of a file using GitHub Linguist via WSL.
+    /// </summary>
+    /// <param name="windowsPath">Windows file path to analyze.</param>
+    /// <returns>Detected language name, or null if not found.</returns>
     public
 #if ASYNC
-        async Task<string>
+        async Task<string?>
 #else
-string
+string?
 #endif
         DetectLanguageForFileGithubLinguist(string windowsPath)
     {
-        string command = null;
-        string arguments = null;
-        // With WSL or WSL 2 not working. In both cases Powershell returns right values but in c# everything empty. Asked on StackOverflow
+        string command;
         var linuxPath = new StringBuilder();
         linuxPath.Append("/mnt/");
         linuxPath.Append(windowsPath[0].ToString().ToLower());
-        var parts = SHSplit.Split(windowsPath, "\"");
-        for (var i = 1; i < parts.Count; i++) linuxPath.Append("/" + parts[i]);
+        var pathParts = SHSplit.Split(windowsPath, "\"");
+        for (var i = 1; i < pathParts.Count; i++) linuxPath.Append("/" + pathParts[i]);
         command = "wsl";
-        arguments = " bash -c \"github-linguist '" + linuxPath + "'\"";
+        string arguments = " bash -c \"github-linguist '" + linuxPath + "'\"";
         var lines =
 #if ASYNC
             await
 #endif
-                PowershellRunner.ci.InvokeProcess(command + ".exe", arguments);
-        var line = lines.First(d => d.Contains(lang)); //CA.ReturnWhichContains(lines, lang).First();
-        if (line == null) return null;
-        var result = line.Replace(lang, string.Empty).Trim();
+                PowershellRunner.Instance.InvokeProcess(command + ".exe", arguments);
+        var languageLine = lines.First(line => line.Contains(languagePrefix));
+        if (languageLine == null) return null;
+        var result = languageLine.Replace(languagePrefix, string.Empty).Trim();
         return result;
     }
 }

@@ -1,43 +1,44 @@
 namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 
-//internal interface IPowershellRunner
-//{
-//    ProgressState clpb { get; set; }
-//#if ASYNC
-//    Task<List<string>> InvokeProcess(string exeFileNameWithoutPath, string arguments);
-//    Task<List<List<string>>> Invoke(IList<string> commands);
-//    Task<List<List<string>>> Invoke(IList<string> commands, PsInvokeArgs e);
-//    Task<List<string>> Invoke(string commands);
-//    Task<List<List<string>>> InvokeAsync(IList<string> commands, PsInvokeArgs e = null);
-//    Task<string> InvokeLinesFromString(string v, bool writePb);
-//    Task<List<string>> InvokeSingle(string command);
-//#else
-//List<string> InvokeProcess(string exeFileNameWithoutPath, string arguments);
-//List<List<string>> Invoke(IList<string> commands);
-//    List<List<string>> Invoke(IList<string> commands, PsInvokeArgs e);
-//    List<string> Invoke(string commands);
-//    Task<List<List<string>>> InvokeAsync(IList<string> commands, PsInvokeArgs e = null);
-//    string InvokeLinesFromString(string v, bool writePb);
-//     List<string> InvokeSingle(string command);
-//#endif
-//    Dictionary<string, List<string>> UsedCommandsInFolders { get; set; }
-//    //List<string> ProcessPSObjects(ICollection<PSObject> pso);
-//}
 /// <summary>
-///     Invoke - more commands, just run InvokeWorker
-///     InvokeLinesFromString - more commands, with progress bar. Simply call InvokeWorker
-///     InvokeProcess - spustí proces ze kterého vrátí output
-///     InvokeSingle - just run InvokeWorker
+/// Interface for running PowerShell commands and processes.
+/// Invoke - runs multiple commands via InvokeWorker.
+/// InvokeLinesFromString - runs multiple commands with progress bar.
+/// InvokeProcess - starts an external process and returns its output.
+/// InvokeSingle - runs a single command.
 /// </summary>
+/// <typeparam name="T">Return type for command results.</typeparam>
 internal interface IPowershellRunner<T>
 {
+    /// <summary>
+    /// Invokes a command in a specified folder by first changing directory.
+    /// </summary>
+    /// <param name="folder">Folder to change to before executing.</param>
+    /// <param name="command">Command to execute.</param>
+    /// <returns>Command output.</returns>
     Task<T> InvokeInFolder(string folder, string command);
+
+    /// <summary>
+    /// Invokes a single PowerShell command.
+    /// </summary>
+    /// <param name="command">Command to execute.</param>
+    /// <returns>Command output.</returns>
     Task<T> InvokeSingle(string command);
-    //List<List<string>> Invoke(IList<string> commands, PsInvokeArgs e);
-    //List<string> Invoke(string commands);
-    // zakomentoval jsem protože všechny 4 invoke pouze volají InvokeWorker
-    Task<T> InvokeLinesFromString(string v, bool writePb);
-    Task<T> InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS a = null);
 
+    /// <summary>
+    /// Invokes commands parsed from a multi-line string.
+    /// </summary>
+    /// <param name="text">Multi-line string of commands.</param>
+    /// <param name="isWritingProgressBar">Whether to write progress bar updates.</param>
+    /// <returns>Command output.</returns>
+    Task<T> InvokeLinesFromString(string text, bool isWritingProgressBar);
 
+    /// <summary>
+    /// Invokes an external process and returns its output.
+    /// </summary>
+    /// <param name="exeFileNameWithoutPath">Executable file name without full path.</param>
+    /// <param name="arguments">Command-line arguments for the process.</param>
+    /// <param name="processArgs">Optional process invocation arguments.</param>
+    /// <returns>Process output.</returns>
+    Task<T> InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS? processArgs = null);
 }

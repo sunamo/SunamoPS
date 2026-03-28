@@ -1,71 +1,99 @@
 namespace SunamoPS._sunamo.SunamoExceptions;
 
-// © www.sunamo.cz. All Rights Reserved.
+/// <summary>
+/// Utility class for exception message formatting and stack trace inspection.
+/// </summary>
 internal sealed partial class Exceptions
 {
-    #region Other
+    /// <summary>
+    /// Prepends a context label if not empty.
+    /// </summary>
+    /// <param name="before">Context label to prepend.</param>
+    /// <returns>Formatted prefix string.</returns>
     internal static string CheckBefore(string before)
     {
         return string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
     }
 
-    internal static string TextOfExceptions(Exception ex, bool alsoInner = true)
+    /// <summary>
+    /// Builds a complete error message from an exception and its inner exceptions.
+    /// </summary>
+    /// <param name="exception">Exception to extract messages from.</param>
+    /// <param name="isIncludingInner">Whether to include inner exception messages.</param>
+    /// <returns>Formatted exception text.</returns>
+    internal static string TextOfExceptions(Exception exception, bool isIncludingInner = true)
     {
-        if (ex == null) return string.Empty;
+        if (exception == null) return string.Empty;
         StringBuilder stringBuilder = new();
         stringBuilder.Append("Exception:");
-        stringBuilder.AppendLine(ex.Message);
-        if (alsoInner)
-            while (ex.InnerException != null)
+        stringBuilder.AppendLine(exception.Message);
+        if (isIncludingInner)
+            while (exception.InnerException != null)
             {
-                ex = ex.InnerException;
-                stringBuilder.AppendLine(ex.Message);
+                exception = exception.InnerException;
+                stringBuilder.AppendLine(exception.Message);
             }
         var result = stringBuilder.ToString();
         return result;
     }
 
-    internal static Tuple<string, string, string> PlaceOfException(
-bool fillAlsoFirstTwo = true)
+    /// <summary>
+    /// Inspects the stack trace to determine the type and method where the exception occurred.
+    /// </summary>
+    /// <param name="isFillAlsoFirstTwo">Whether to fill type and method name from the first non-ThrowEx frame.</param>
+    /// <returns>Tuple of (type name, method name, stack trace text).</returns>
+    internal static Tuple<string, string, string> PlaceOfException(bool isFillAlsoFirstTwo = true)
     {
-        StackTrace st = new();
-        var value = st.ToString();
-        var lines = value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        StackTrace stackTrace = new();
+        var stackTraceText = stackTrace.ToString();
+        var lines = stackTraceText.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList();
         lines.RemoveAt(0);
-        var i = 0;
-        string type = string.Empty;
+        string typeName = string.Empty;
         string methodName = string.Empty;
-        for (; i < lines.Count; i++)
+        for (var i = 0; i < lines.Count; i++)
         {
-            var item = lines[i];
-            if (fillAlsoFirstTwo)
-                if (!item.StartsWith("   at ThrowEx"))
+            var line = lines[i];
+            if (isFillAlsoFirstTwo)
+                if (!line.StartsWith("   at ThrowEx"))
                 {
-                    TypeAndMethodName(item, out type, out methodName);
-                    fillAlsoFirstTwo = false;
+                    TypeAndMethodName(line, out typeName, out methodName);
+                    isFillAlsoFirstTwo = false;
                 }
-            if (item.StartsWith("at System."))
+            if (line.StartsWith("at System."))
             {
                 lines.Add(string.Empty);
                 lines.Add(string.Empty);
                 break;
             }
         }
-        return new Tuple<string, string, string>(type, methodName, string.Join(Environment.NewLine, lines));
+        return new Tuple<string, string, string>(typeName, methodName, string.Join(Environment.NewLine, lines));
     }
-    internal static void TypeAndMethodName(string lines, out string type, out string methodName)
+
+    /// <summary>
+    /// Extracts type name and method name from a stack trace line.
+    /// </summary>
+    /// <param name="stackTraceLine">Single line from a stack trace.</param>
+    /// <param name="typeName">Extracted type name.</param>
+    /// <param name="methodName">Extracted method name.</param>
+    internal static void TypeAndMethodName(string stackTraceLine, out string typeName, out string methodName)
     {
-        var s2 = lines.Split("at ")[1].Trim();
-        var text = s2.Split("(")[0];
-        var parameter = text.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-        methodName = parameter[^1];
-        parameter.RemoveAt(parameter.Count - 1);
-        type = string.Join(".", parameter);
+        var afterAt = stackTraceLine.Split("at ")[1].Trim();
+        var beforeParenthesis = afterAt.Split('(')[0];
+        var segments = beforeParenthesis.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+        methodName = segments[^1];
+        segments.RemoveAt(segments.Count - 1);
+        typeName = string.Join(".", segments);
     }
-    internal static string CallingMethod(int value = 1)
+
+    /// <summary>
+    /// Gets the name of the calling method at the specified stack depth.
+    /// </summary>
+    /// <param name="depth">Stack frame depth to inspect.</param>
+    /// <returns>Method name at the specified depth.</returns>
+    internal static string CallingMethod(int depth = 1)
     {
         StackTrace stackTrace = new();
-        var methodBase = stackTrace.GetFrame(value)?.GetMethod();
+        var methodBase = stackTrace.GetFrame(depth)?.GetMethod();
         if (methodBase == null)
         {
             return "Method name cannot be get";
@@ -73,22 +101,26 @@ bool fillAlsoFirstTwo = true)
         var methodName = methodBase.Name;
         return methodName;
     }
-    #endregion
 
-    #region IsNullOrWhitespace
-    readonly static StringBuilder sbAdditionalInfoInner = new();
-    readonly static StringBuilder sbAdditionalInfo = new();
-    #endregion
-
-    #region OnlyReturnString 
-
+    /// <summary>
+    /// Returns a formatted "not allowed" message.
+    /// </summary>
+    /// <param name="before">Context label.</param>
+    /// <param name="what">What is not allowed.</param>
+    /// <returns>Formatted message or null.</returns>
     internal static string? IsNotAllowed(string before, string what)
     {
         return CheckBefore(before) + what + " is not allowed.";
     }
+
+    /// <summary>
+    /// Returns a formatted custom error message.
+    /// </summary>
+    /// <param name="before">Context label.</param>
+    /// <param name="message">Custom error message.</param>
+    /// <returns>Formatted message or null.</returns>
     internal static string? Custom(string before, string message)
     {
         return CheckBefore(before) + message;
     }
-    #endregion
 }

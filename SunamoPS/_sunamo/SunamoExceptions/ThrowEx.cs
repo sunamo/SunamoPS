@@ -2,35 +2,52 @@ namespace SunamoPS._sunamo.SunamoExceptions;
 
 using Debugger = System.Diagnostics.Debugger;
 
+/// <summary>
+/// Helper for throwing formatted exceptions with context information.
+/// </summary>
 internal partial class ThrowEx
 {
-
-
-    internal static bool Custom(string message, bool reallyThrow = true, string secondMessage = "")
+    /// <summary>
+    /// Throws a custom exception with the specified message.
+    /// </summary>
+    /// <param name="message">Primary error message.</param>
+    /// <param name="isReallyThrowing">Whether to actually throw or just return true.</param>
+    /// <param name="secondMessage">Optional additional message.</param>
+    /// <returns>True if exception was triggered, false otherwise.</returns>
+    internal static bool Custom(string message, bool isReallyThrowing = true, string secondMessage = "")
     {
         string joined = string.Join(" ", message, secondMessage);
-        string? str = Exceptions.Custom(FullNameOfExecutedCode(), joined);
-        return ThrowIsNotNull(str, reallyThrow);
+        string? exceptionText = Exceptions.Custom(FullNameOfExecutedCode(), joined);
+        return ThrowIsNotNull(exceptionText, isReallyThrowing);
     }
 
+    /// <summary>
+    /// Throws an exception indicating that an operation is not allowed.
+    /// </summary>
+    /// <param name="what">Description of what is not allowed.</param>
+    /// <returns>True if exception was triggered.</returns>
     internal static bool IsNotAllowed(string what)
-    { return ThrowIsNotNull(Exceptions.IsNotAllowed(FullNameOfExecutedCode(), what)); }
+    {
+        return ThrowIsNotNull(Exceptions.IsNotAllowed(FullNameOfExecutedCode(), what));
+    }
 
-
-    #region Other
+    /// <summary>
+    /// Gets the full name (type.method) of the currently executing code.
+    /// </summary>
+    /// <returns>Full name string in format "Namespace.Type.Method".</returns>
     internal static string FullNameOfExecutedCode()
     {
-        Tuple<string, string, string> placeOfExc = Exceptions.PlaceOfException();
-        string f = FullNameOfExecutedCode(placeOfExc.Item1, placeOfExc.Item2, true);
-        return f;
+        Tuple<string, string, string> placeOfException = Exceptions.PlaceOfException();
+        string fullName = FullNameOfExecutedCode(placeOfException.Item1, placeOfException.Item2, true);
+        return fullName;
     }
 
-    static string FullNameOfExecutedCode(object type, string methodName, bool fromThrowEx = false)
+    private static string FullNameOfExecutedCode(object type, string methodName, bool isFromThrowEx = false)
     {
         if (methodName == null)
         {
             int depth = 2;
-            if (fromThrowEx)
+            if (isFromThrowEx)
             {
                 depth++;
             }
@@ -38,9 +55,9 @@ internal partial class ThrowEx
             methodName = Exceptions.CallingMethod(depth);
         }
         string typeFullName;
-        if (type is Type type2)
+        if (type is Type typeInstance)
         {
-            typeFullName = type2.FullName ?? "Type cannot be get via type is Type type2";
+            typeFullName = typeInstance.FullName ?? "Type cannot be get via type is Type type2";
         }
         else if (type is MethodBase method)
         {
@@ -53,24 +70,29 @@ internal partial class ThrowEx
         }
         else
         {
-            Type t = type.GetType();
-            typeFullName = t.FullName ?? "Type cannot be get via type.GetType()";
+            Type resolvedType = type.GetType();
+            typeFullName = resolvedType.FullName ?? "Type cannot be get via type.GetType()";
         }
         return string.Concat(typeFullName, ".", methodName);
     }
 
-    internal static bool ThrowIsNotNull(string? exception, bool reallyThrow = true)
+    /// <summary>
+    /// Throws an exception if the provided message is not null.
+    /// </summary>
+    /// <param name="exceptionMessage">Exception message to throw, or null to skip.</param>
+    /// <param name="isReallyThrowing">Whether to actually throw or just return true.</param>
+    /// <returns>True if message was not null, false otherwise.</returns>
+    internal static bool ThrowIsNotNull(string? exceptionMessage, bool isReallyThrowing = true)
     {
-        if (exception != null)
+        if (exceptionMessage != null)
         {
             Debugger.Break();
-            if (reallyThrow)
+            if (isReallyThrowing)
             {
-                throw new Exception(exception);
+                throw new Exception(exceptionMessage);
             }
             return true;
         }
         return false;
     }
-    #endregion
 }

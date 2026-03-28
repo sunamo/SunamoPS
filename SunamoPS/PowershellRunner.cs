@@ -1,22 +1,29 @@
 namespace SunamoPS;
 
-// EN: Variable names have been checked and replaced with self-descriptive names
-// CZ: Názvy proměnných byly zkontrolovány a nahrazeny samopopisnými názvy
+/// <summary>
+/// Core PowerShell command runner that executes commands and returns structured output.
+/// </summary>
 public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>>
 {
     /// <summary>
-    ///     Musím instanci vytvářet tady, ne v ctoru
+    /// Singleton instance of PowershellRunner.
     /// </summary>
-    public static PowershellRunner ci = new();
+    public static PowershellRunner Instance { get; } = new();
+
     private bool saveUsedCommandToDictionary;
+
     private PowershellRunner()
     {
-    // nevím proč to tu je, FS.InvokePs mi EveryLine nenašel. 15-4-23 zakomentováno
-    //FS.InvokePs = Invoke;
     }
 
-    public ProgressStatePS clpb { get; set; }
+    /// <summary>
+    /// Gets or sets the progress state for tracking command execution.
+    /// </summary>
+    public ProgressStatePS ProgressState { get; set; } = new();
 
+    /// <summary>
+    /// Gets or sets whether executed commands should be saved to a dictionary.
+    /// </summary>
     public bool SaveUsedCommandToDictionary
     {
         get
@@ -26,114 +33,90 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
 
         set
         {
-#if DEBUG
-            if (value)
-            {
-            }
-#endif
             saveUsedCommandToDictionary = value;
         }
     }
 
     /// <summary>
-    ///     Tested, working
-    ///     For every command return at least one entry in result
-    ///     No nevím jestli funguje, dal jsem 4 příkazy a ze všech jsem dostal příkaz z prvního že neexistuje cmd let. možná
-    ///     musím bez profilu. profil není v c# podporovaný.
+    /// Invokes a list of PowerShell commands and returns structured output.
+    /// For each command, returns at least one entry in the result.
     /// </summary>
-    /// <param name = "commands"></param>
-    public 
+    /// <param name="commands">List of PowerShell commands to execute.</param>
+    /// <param name="invokeArgs">Optional invocation arguments for caching, progress, and command prepending.</param>
+    /// <returns>List of output lists, one per command.</returns>
+    public
 #if ASYNC
         async Task<List<List<string>>>
 #else
-    List<List<string>> 
+    List<List<string>>
 #endif
-    Invoke(List<string> commands, PsInvokeArgs e = null)
+    Invoke(List<string> commands, PsInvokeArgs? invokeArgs = null)
     {
-        if (e == null)
-            e = new PsInvokeArgs();
-        var fileExists = false;
-        if (e.pathToSaveLoadPsOutput != null && File.Exists(e.pathToSaveLoadPsOutput))
+        if (invokeArgs == null)
+            invokeArgs = new PsInvokeArgs();
+        var isFileExisting = false;
+        if (invokeArgs.PathToSaveLoadPsOutput != null && File.Exists(invokeArgs.PathToSaveLoadPsOutput))
         {
-            // todo zde podmínečně kontrolovat zda DEBUG je přítomen
-            fileExists = true;
-            var result = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(e.pathToSaveLoadPsOutput));
-            var r2 = new List<List<string>>(result.Count);
-            foreach (var item in result)
-                r2.Add(SHGetLines.GetLines(item));
-            return r2;
+            isFileExisting = true;
+            var cachedResult = JsonConvert.DeserializeObject<List<string>>(await File.ReadAllTextAsync(invokeArgs.PathToSaveLoadPsOutput));
+            var parsedResult = new List<List<string>>(cachedResult!.Count);
+            foreach (var item in cachedResult)
+                parsedResult.Add(SHGetLines.GetLines(item));
+            return parsedResult;
         }
 
-        List<string> addBeforeEveryCommand = null;
-        var removeFirst = false;
+        List<string>? prependCommands = null;
+        var isRemovingFirst = false;
         foreach (var item in commands)
         {
             if (item.Trim().StartsWith("cd "))
             {
-                if (addBeforeEveryCommand == null)
-                    addBeforeEveryCommand = new List<string>();
-                removeFirst = true;
-                addBeforeEveryCommand.Add(item);
+                if (prependCommands == null)
+                    prependCommands = new List<string>();
+                isRemovingFirst = true;
+                prependCommands.Add(item);
             }
 
             break;
         }
 
-        if (removeFirst)
+        if (isRemovingFirst)
             commands.RemoveAt(0);
-        if (addBeforeEveryCommand != null)
-            e.addBeforeEveryCommand = addBeforeEveryCommand;
+        if (prependCommands != null)
+            invokeArgs.AddBeforeEveryCommand = prependCommands;
         var returnList = new List<List<string>>();
-        PowerShell ps = null;
-        //  After leaving using is closed pipeline, must watch for complete or
-#if DEBUG
-        //if (commands[1] == "git status")
-        //{
+        PowerShell? powerShell = null;
 
-        //}
-#endif
         foreach (var item in commands)
         {
-#if DEBUG
-            //CL.Appeal(item);
-
-            if (item.Contains("git status"))
+            using (powerShell = PowerShell.Create())
             {
-            }
-#endif
-            using (ps = PowerShell.Create())
-            {
-                if (e.addBeforeEveryCommand != null)
-                    foreach (var item2 in e.addBeforeEveryCommand)
-                        ps = ps.AddScript(item2);
-                ps = ps.AddScript(item).AddCommand("Out-String");
-                PSDataCollection<PSObject> psObjects = null;
+                if (invokeArgs.AddBeforeEveryCommand != null)
+                    foreach (var prependCommand in invokeArgs.AddBeforeEveryCommand)
+                        powerShell = powerShell.AddScript(prependCommand);
+                powerShell = powerShell.AddScript(item).AddCommand("Out-String");
+                PSDataCollection<PSObject>? psObjects = null;
                 try
                 {
 #if ASYNC
-                    psObjects = await ps.InvokeAsync();
+                    psObjects = await powerShell.InvokeAsync();
 #else
-                    var async_ = ps.BeginInvoke();
-                    // Return for SleepWithRandomOutputConsole zero outputs
-                    // Pokud se to zasekává, zkontroluj si jestli nenecháváš v app CL.Readline(). S tímto ji powershell nikdy nedokončí
-                    psObjects = ps.EndInvoke(async_);
+                    var asyncResult = powerShell.BeginInvoke();
+                    psObjects = powerShell.EndInvoke(asyncResult);
 #endif
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    throw new Exception(Exceptions.TextOfExceptions(ex));
-                // zde by to mělo vyhodit a podle toho opravit. pak autoservisy
-                //CL.WriteLine(ex);
-                //throw;
+                    throw new Exception(Exceptions.TextOfExceptions(exception));
                 }
 
-                PSDataCollection<ErrorRecord> errors = ps.Streams.Error;
+                PSDataCollection<ErrorRecord> errors = powerShell.Streams.Error;
                 if (errors.Count > 0)
                 {
                     var stringBuilder = new StringBuilder();
-                    foreach (var item2 in ps.Streams.Error)
-                        if (item2 != null)
-                            ErrorRecordHelper.Text(stringBuilder, item2);
+                    foreach (var errorRecord in powerShell.Streams.Error)
+                        if (errorRecord != null)
+                            ErrorRecordHelper.Text(stringBuilder, errorRecord);
                     returnList.Add(new List<string>([stringBuilder.ToString().ToUnixLineEnding()]));
                 }
                 else
@@ -143,27 +126,12 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
             }
         }
 
-        //for (int i = 0; i < returnList.Count; i++)
-        //{
-        //    returnList[i] = CA.Trim(returnList[i]);
-        //}
-        //result.Wait();
-        //var output = result.Result;
-        if (e.immediatelyToStatus)
+        if (invokeArgs.IsImmediatelyWritingToStatus)
             foreach (var item in returnList)
-                foreach (var item2 in item)
-                    if (!string.IsNullOrEmpty(item2))
-                        Console.WriteLine(item2);
-        //ThisApp.Info(item2);
-        /*
-TOhle je zajímavé
-do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
-        přesto zde je false
-        ještě zajímavější je že když jedu na 400+ iteracích, tak tam mám i git commit, git pull atd. má tam být jen git status
+                foreach (var outputLine in item)
+                    if (!string.IsNullOrEmpty(outputLine))
+                        Console.WriteLine(outputLine);
 
-        TODO: Proto jsem to dočasně zakomenoval abych se nekoukal na to zda je true
-        protože mi to zpomaluje tak t ozakomentuji i tady
-         */
         if (SaveUsedCommandToDictionary)
             for (var i = 0; i < commands.Count; i++)
             {
@@ -175,43 +143,54 @@ do SaveUsedCommandToDictionary nastavím true, vidím to v debuggeru
                 }
             }
 
-        if (!fileExists && e.pathToSaveLoadPsOutput != null)
+        if (!isFileExisting && invokeArgs.PathToSaveLoadPsOutput != null)
         {
             var sourceList = new List<string>(returnList.Count);
             foreach (var item in returnList)
                 sourceList.Add(string.Join(Environment.NewLine, item));
-            await File.WriteAllTextAsync(e.pathToSaveLoadPsOutput, JsonConvert.SerializeObject(sourceList));
+            await File.WriteAllTextAsync(invokeArgs.PathToSaveLoadPsOutput, JsonConvert.SerializeObject(sourceList));
         }
 
         return returnList;
     }
 
-    public 
+    /// <summary>
+    /// Invokes commands parsed from a multi-line string and returns the combined output as lines.
+    /// </summary>
+    /// <param name="text">Multi-line string containing commands.</param>
+    /// <param name="isWritingProgressBar">Whether to write progress bar updates.</param>
+    /// <returns>List of output lines.</returns>
+    public
 #if ASYNC
         async Task<List<string>>
 #else
-    string 
+string
 #endif
-    InvokeLinesFromString(string v, bool writePb)
+    InvokeLinesFromString(string text, bool isWritingProgressBar)
     {
-        var list = SHGetLines.GetLines(v);
-        var result = 
+        var commandList = SHGetLines.GetLines(text);
+        var result =
 #if ASYNC
             await
 #endif
-        Invoke(list, new PsInvokeArgs { writePb = writePb });
+        Invoke(commandList, new PsInvokeArgs { IsWritingProgressBar = isWritingProgressBar });
         var stringBuilder = new StringBuilder();
         foreach (var item in result)
             stringBuilder.AppendLine(string.Join(Environment.NewLine, item).Trim());
-        var result2 = stringBuilder.ToString().Trim();
-        return SHGetLines.GetLines(result2);
+        var combinedOutput = stringBuilder.ToString().Trim();
+        return SHGetLines.GetLines(combinedOutput);
     }
 
-    public 
+    /// <summary>
+    /// Invokes a single PowerShell command and returns its output.
+    /// </summary>
+    /// <param name="command">Command to execute.</param>
+    /// <returns>List of output lines from the command.</returns>
+    public
 #if ASYNC
 async Task<List<string>>
 #else
-    List<string> 
+    List<string>
 #endif
     InvokeSingle(string command)
     {

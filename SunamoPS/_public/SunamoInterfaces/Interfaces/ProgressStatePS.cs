@@ -1,41 +1,82 @@
 namespace SunamoPS._public.SunamoInterfaces.Interfaces;
 
+/// <summary>
+/// Tracks progress state for batch operations with event-based notifications.
+/// </summary>
 public class ProgressStatePS
 {
-    public int n;
-    public bool isRegistered { get; set; }
+    /// <summary>
+    /// Gets or sets the current item count.
+    /// </summary>
+    public int Count { get; set; }
 
-    public void Init(Action<int> OverallSongs, Action<int> AnotherSong, Action WriteProgressBarEnd)
+    /// <summary>
+    /// Gets or sets whether this progress state has registered event handlers.
+    /// </summary>
+    public bool IsRegistered { get; set; }
+
+    /// <summary>
+    /// Initializes the progress state with event handlers.
+    /// </summary>
+    /// <param name="overallItems">Handler called with total item count.</param>
+    /// <param name="anotherItem">Handler called when another item is processed.</param>
+    /// <param name="writeProgressBarEnd">Handler called when progress bar should end.</param>
+    public void Init(Action<int> overallItems, Action<int> anotherItem, Action writeProgressBarEnd)
     {
-        isRegistered = true;
-        this.AnotherSong += AnotherSong;
-        this.OverallSongs += OverallSongs;
-        this.WriteProgressBarEnd += WriteProgressBarEnd;
+        IsRegistered = true;
+        AnotherItem += anotherItem;
+        OverallItems += overallItems;
+        WriteProgressBarEnd += writeProgressBarEnd;
     }
 
-    public event Action<int> AnotherSong;
-    public event Action<int> OverallSongs;
-    public event Action WriteProgressBarEnd;
+    /// <summary>
+    /// Event raised when another item is processed.
+    /// </summary>
+    public event Action<int>? AnotherItem;
 
-    public void OnAnotherSong()
+    /// <summary>
+    /// Event raised to set the total number of items.
+    /// </summary>
+    public event Action<int>? OverallItems;
+
+    /// <summary>
+    /// Event raised when the progress bar should be closed.
+    /// </summary>
+    public event Action? WriteProgressBarEnd;
+
+    /// <summary>
+    /// Increments count and raises the AnotherItem event.
+    /// </summary>
+    public void OnAnotherItem()
     {
-        n++;
-        OnAnotherSong(n);
+        Count++;
+        OnAnotherItem(Count);
     }
 
-    public void OnAnotherSong(int n)
+    /// <summary>
+    /// Raises the AnotherItem event with the specified count.
+    /// </summary>
+    /// <param name="count">Current item count.</param>
+    public void OnAnotherItem(int count)
     {
-        AnotherSong(n);
+        AnotherItem?.Invoke(count);
     }
 
-    public void OnOverallSongs(int n2)
+    /// <summary>
+    /// Resets the count and raises the OverallItems event.
+    /// </summary>
+    /// <param name="totalCount">Total number of items to process.</param>
+    public void OnOverallItems(int totalCount)
     {
-        n = 0;
-        OverallSongs(n2);
+        Count = 0;
+        OverallItems?.Invoke(totalCount);
     }
 
+    /// <summary>
+    /// Raises the WriteProgressBarEnd event.
+    /// </summary>
     public void OnWriteProgressBarEnd()
     {
-        WriteProgressBarEnd();
+        WriteProgressBarEnd?.Invoke();
     }
 }

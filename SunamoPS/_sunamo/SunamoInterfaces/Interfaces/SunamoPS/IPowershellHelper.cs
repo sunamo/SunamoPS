@@ -1,5 +1,8 @@
 namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 
+/// <summary>
+/// Interface for PowerShell helper operations.
+/// </summary>
 internal interface IPowershellHelper
 {
 #if ASYNC
@@ -7,13 +10,17 @@ internal interface IPowershellHelper
 #else
 void
 #endif
-        CmdC(string v, Func<bool, TextBuilderPS> ciTextBuilder);
+        CmdC(string command, Func<bool, TextBuilderPS> textBuilderFactory);
 #if ASYNC
-    Task<string>
+    Task<string?>
 #else
-string
+string?
 #endif
         DetectLanguageForFileGithubLinguist(string windowsPath);
 
+    /// <summary>
+    /// Gets the names of all running processes.
+    /// </summary>
+    /// <returns>List of process names.</returns>
     List<string> ProcessNames();
 }

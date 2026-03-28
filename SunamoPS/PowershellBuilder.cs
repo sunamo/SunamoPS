@@ -1,100 +1,144 @@
 namespace SunamoPS;
 
 /// <summary>
-///     Prvně jsem tu měl ci
-///     Potom mě napadlo že v asychronním programování to není dobrý nápad a "jako stejné" mě napadlo udělat metodu
-///     CreateInstance
-///     Nicméně zásada že nebudu měnit to co jsem napsal platí. Musím si prvně nastudovat jak je to s async. Kdy metoda
-///     může přistupovat
+/// Builds PowerShell command scripts using a text builder, supporting cd, cmd /c, yt-dlp, and other commands.
 /// </summary>
 public class PowershellBuilder : IPowershellBuilderPS
 {
     /// <summary>
-    ///     musí být public aby šel vytvořit přes .Create
+    /// Creates a new PowershellBuilder with the specified text builder factory.
     /// </summary>
-    public PowershellBuilder(Func<bool, TextBuilderPS> ci)
+    /// <param name="textBuilderFactory">Factory function that creates a TextBuilderPS. The bool parameter controls list mode.</param>
+    public PowershellBuilder(Func<bool, TextBuilderPS> textBuilderFactory)
     {
-        // 15.4.23 na false. čti public TextBuilder(bool useList = false) proč
-        sb = ci(false);
-        sb.prependEveryNoWhite = "";
+        TextBuilder = textBuilderFactory(false);
+        TextBuilder.PrependEveryNoWhite = "";
     }
 
-    public TextBuilderPS sb { get; set; }
-    public IGitBashBuilderPS Git { get; set; }
-    public INpmBashBuilderPS Npm { get; set; }
+    /// <summary>
+    /// Gets or sets the text builder used for constructing commands.
+    /// </summary>
+    public TextBuilderPS TextBuilder { get; set; }
 
+    /// <summary>
+    /// Gets or sets the Git bash builder.
+    /// </summary>
+    public IGitBashBuilderPS? Git { get; set; }
+
+    /// <summary>
+    /// Gets or sets the NPM bash builder.
+    /// </summary>
+    public INpmBashBuilderPS? Npm { get; set; }
+
+    /// <summary>
+    /// Clears all accumulated commands.
+    /// </summary>
     public void Clear()
     {
-        sb.Clear();
+        TextBuilder.Clear();
     }
 
     /// <summary>
-    ///     Dont postfix with NewLine
-    ///     Automatically prepend by space
-    ///     Add to previous command, not create new!
+    /// Adds raw text to the current command without a newline. Automatically prepends configured prefix.
     /// </summary>
-    /// <param name="v"></param>
-    public void AddRaw(string v)
+    /// <param name="text">Raw text to append.</param>
+    public void AddRaw(string text)
     {
-        sb.Append(v);
+        TextBuilder.Append(text);
     }
 
-    public void AddRawLine(string v = "")
+    /// <summary>
+    /// Adds raw text followed by a newline.
+    /// </summary>
+    /// <param name="text">Raw text to append as a line.</param>
+    public void AddRawLine(string text = "")
     {
-        sb.AppendLine(v);
+        TextBuilder.AppendLine(text);
     }
 
-
+    /// <summary>
+    /// Adds an argument name-value pair to the current command.
+    /// </summary>
+    /// <param name="argName">Name of the argument.</param>
+    /// <param name="argValue">Value of the argument.</param>
     public void AddArg(string argName, string argValue)
     {
-        sb.Append(argName);
-        sb.Append(argValue);
+        TextBuilder.Append(argName);
+        TextBuilder.Append(argValue);
     }
 
     /// <summary>
-    ///     Returns string because of PowershellRunner
+    /// Changes directory to the specified path.
     /// </summary>
-    /// <param name="path"></param>
-    public
-        void
-        Cd(string path)
+    /// <param name="path">Target directory path.</param>
+    public void Cd(string path)
     {
-        sb.AppendLine("cd \"" + path + "\"");
+        TextBuilder.AppendLine("cd \"" + path + "\"");
     }
 
-    public void RemoveItem(string v)
+    /// <summary>
+    /// Adds a Remove-Item command with -Force flag.
+    /// </summary>
+    /// <param name="path">Path of the item to remove.</param>
+    public void RemoveItem(string path)
     {
-        sb.AppendLine("Remove-Item " + v + " -Force");
-        sb.AppendLine();
+        TextBuilder.AppendLine("Remove-Item " + path + " -Force");
+        TextBuilder.AppendLine();
     }
 
-    public void CmdC(string v)
+    /// <summary>
+    /// Adds a cmd /c command.
+    /// </summary>
+    /// <param name="command">Command to execute via cmd /c.</param>
+    public void CmdC(string command)
     {
-        sb.AppendLine("cmd /c " + v);
+        TextBuilder.AppendLine("cmd /c " + command);
     }
 
+    /// <summary>
+    /// Returns all accumulated commands as a single string.
+    /// </summary>
+    /// <returns>String representation of all commands.</returns>
     public override string ToString()
     {
-        return sb.ToString();
+        return TextBuilder.ToString();
     }
 
+    /// <summary>
+    /// Converts accumulated commands to a list of strings.
+    /// </summary>
+    /// <returns>List of command strings.</returns>
     public List<string> ToList()
     {
-        return sb.list;
+        return TextBuilder.List ?? new List<string>();
     }
 
-    public void WithPath(CommandWithPath c, string path)
+    /// <summary>
+    /// Adds a command with a path argument.
+    /// </summary>
+    /// <param name="commandWithPath">Type of command.</param>
+    /// <param name="path">Path argument for the command.</param>
+    public void WithPath(CommandWithPath commandWithPath, string path)
     {
-        sb.AppendLine(c + " '" + path + "'");
+        TextBuilder.AppendLine(commandWithPath + " '" + path + "'");
     }
 
+    /// <summary>
+    /// Adds a yt-dlp download command.
+    /// </summary>
+    /// <param name="url">URL to download.</param>
     public void YtDlp(string url)
     {
-        sb.AppendLine("ytp " + url);
+        TextBuilder.AppendLine("ytp " + url);
     }
 
-    public static PowershellBuilder Create(Func<bool, TextBuilderPS> ci)
+    /// <summary>
+    /// Creates a new PowershellBuilder instance.
+    /// </summary>
+    /// <param name="textBuilderFactory">Factory function for creating a TextBuilderPS.</param>
+    /// <returns>New PowershellBuilder instance.</returns>
+    public static PowershellBuilder Create(Func<bool, TextBuilderPS> textBuilderFactory)
     {
-        return new PowershellBuilder(ci);
+        return new PowershellBuilder(textBuilderFactory);
     }
 }

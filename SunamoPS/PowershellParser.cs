@@ -1,25 +1,36 @@
 namespace SunamoPS;
 
+/// <summary>
+/// Parses PowerShell command strings into individual parts, respecting quoted sections.
+/// </summary>
 public class PowershellParser : IPowershellParser
 {
-    public static PowershellParser ci = new();
-    private Type type = typeof(PowershellParser);
+    /// <summary>
+    /// Singleton instance of PowershellParser.
+    /// </summary>
+    public static PowershellParser Instance { get; } = new();
 
     private PowershellParser()
     {
     }
 
-    public List<string> ParseToParts(string d, string charWhichIsNotContained)
+    /// <summary>
+    /// Parses a command string into individual parts. Spaces inside quoted sections are preserved.
+    /// </summary>
+    /// <param name="text">Command string to parse.</param>
+    /// <param name="charWhichIsNotContained">Temporary placeholder character that must not appear in the input.</param>
+    /// <returns>List of parsed command parts.</returns>
+    public List<string> ParseToParts(string text, string charWhichIsNotContained)
     {
-        if (d.Contains(charWhichIsNotContained)) throw new Exception(d + " contains " + charWhichIsNotContained);
+        if (text.Contains(charWhichIsNotContained)) throw new Exception(text + " contains " + charWhichIsNotContained);
 
-        var stringBuilder = new StringBuilder(d);
-        var builder = Regex.Matches(d, "\"([^\"]*)\"").Select(d => d.Value); //SH.ValuesBetweenQuotes(d, true);
-        foreach (var item in builder) stringBuilder = stringBuilder.Replace(item, item.Replace(" ", charWhichIsNotContained));
+        var stringBuilder = new StringBuilder(text);
+        var quotedMatches = Regex.Matches(text, "\"([^\"]*)\"").Select(match => match.Value);
+        foreach (var item in quotedMatches) stringBuilder = stringBuilder.Replace(item, item.Replace(" ", charWhichIsNotContained));
 
-        var parameter = SHSplit.Split(stringBuilder.ToString(), " ");
-        for (var i = 0; i < parameter.Count; i++) parameter[i] = parameter[i].Replace(charWhichIsNotContained, "");
+        var parts = SHSplit.Split(stringBuilder.ToString(), " ");
+        for (var i = 0; i < parts.Count; i++) parts[i] = parts[i].Replace(charWhichIsNotContained, "");
 
-        return parameter;
+        return parts;
     }
 }
