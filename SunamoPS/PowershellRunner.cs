@@ -1,13 +1,7 @@
 namespace SunamoPS;
 
-/// <summary>
-/// Core PowerShell command runner that executes commands and returns structured output.
-/// </summary>
 public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>>
 {
-    /// <summary>
-    /// Singleton instance of PowershellRunner.
-    /// </summary>
     public static PowershellRunner Instance { get; } = new();
 
     private bool saveUsedCommandToDictionary;
@@ -16,44 +10,19 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     {
     }
 
-    /// <summary>
-    /// Gets or sets the progress state for tracking command execution.
-    /// </summary>
     public ProgressStatePS ProgressState { get; set; } = new();
 
-    /// <summary>
-    /// Gets or sets whether executed commands should be saved to a dictionary.
-    /// </summary>
     public bool SaveUsedCommandToDictionary
     {
-        get
-        {
-            return saveUsedCommandToDictionary;
-        }
-
-        set
-        {
-            saveUsedCommandToDictionary = value;
-        }
+        get => saveUsedCommandToDictionary;
+        set => saveUsedCommandToDictionary = value;
     }
 
-    /// <summary>
-    /// Invokes a list of PowerShell commands and returns structured output.
-    /// For each command, returns at least one entry in the result.
-    /// </summary>
-    /// <param name="commands">List of PowerShell commands to execute.</param>
-    /// <param name="invokeArgs">Optional invocation arguments for caching, progress, and command prepending.</param>
-    /// <returns>List of output lists, one per command.</returns>
     public
-#if ASYNC
         async Task<List<List<string>>>
-#else
-    List<List<string>>
-#endif
     Invoke(List<string> commands, PsInvokeArgs? invokeArgs = null)
     {
-        if (invokeArgs == null)
-            invokeArgs = new PsInvokeArgs();
+        invokeArgs ??= new PsInvokeArgs();
         var isFileExisting = false;
         if (invokeArgs.PathToSaveLoadPsOutput != null && File.Exists(invokeArgs.PathToSaveLoadPsOutput))
         {
@@ -71,8 +40,7 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         {
             if (item.Trim().StartsWith("cd "))
             {
-                if (prependCommands == null)
-                    prependCommands = new List<string>();
+                prependCommands ??= new List<string>();
                 isRemovingFirst = true;
                 prependCommands.Add(item);
             }
@@ -98,12 +66,7 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
                 PSDataCollection<PSObject>? psObjects = null;
                 try
                 {
-#if ASYNC
                     psObjects = await powerShell.InvokeAsync();
-#else
-                    var asyncResult = powerShell.BeginInvoke();
-                    psObjects = powerShell.EndInvoke(asyncResult);
-#endif
                 }
                 catch (Exception exception)
                 {
@@ -154,25 +117,13 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         return returnList;
     }
 
-    /// <summary>
-    /// Invokes commands parsed from a multi-line string and returns the combined output as lines.
-    /// </summary>
-    /// <param name="text">Multi-line string containing commands.</param>
-    /// <param name="isWritingProgressBar">Whether to write progress bar updates.</param>
-    /// <returns>List of output lines.</returns>
     public
-#if ASYNC
         async Task<List<string>>
-#else
-string
-#endif
     InvokeLinesFromString(string text, bool isWritingProgressBar)
     {
         var commandList = SHGetLines.GetLines(text);
         var result =
-#if ASYNC
             await
-#endif
         Invoke(commandList, new PsInvokeArgs { IsWritingProgressBar = isWritingProgressBar });
         var stringBuilder = new StringBuilder();
         foreach (var item in result)
@@ -181,23 +132,12 @@ string
         return SHGetLines.GetLines(combinedOutput);
     }
 
-    /// <summary>
-    /// Invokes a single PowerShell command and returns its output.
-    /// </summary>
-    /// <param name="command">Command to execute.</param>
-    /// <returns>List of output lines from the command.</returns>
     public
-#if ASYNC
 async Task<List<string>>
-#else
-    List<string>
-#endif
     InvokeSingle(string command)
     {
         return (
-#if ASYNC
 await
-#endif
         Invoke(new List<string>([command])))[0];
     }
 }

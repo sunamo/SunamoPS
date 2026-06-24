@@ -1,8 +1,5 @@
 namespace SunamoPS._public;
 
-/// <summary>
-/// Text builder that supports both StringBuilder and List-based modes for constructing PowerShell commands.
-/// </summary>
 public class TextBuilderPS
 {
     private bool canUndo = false;
@@ -10,24 +7,12 @@ public class TextBuilderPS
     private string lastText = "";
     private bool isUsingList = false;
 
-    /// <summary>
-    /// Gets or sets the underlying StringBuilder instance. Null when using list mode.
-    /// </summary>
     public StringBuilder? StringBuilder { get; set; } = null;
 
-    /// <summary>
-    /// Gets or sets the text to prepend before every non-whitespace append.
-    /// </summary>
     public string PrependEveryNoWhite { get; set; } = string.Empty;
 
-    /// <summary>
-    /// Gets or sets the list of command strings. Used in list mode.
-    /// </summary>
     public List<string>? List { get; set; }
 
-    /// <summary>
-    /// Clears all accumulated content.
-    /// </summary>
     public void Clear()
     {
         if (isUsingList)
@@ -40,20 +25,11 @@ public class TextBuilderPS
         }
     }
 
-    /// <summary>
-    /// Creates a new TextBuilderPS instance.
-    /// </summary>
-    /// <param name="isUsingList">Whether to use list mode instead of StringBuilder mode.</param>
-    /// <returns>New TextBuilderPS instance.</returns>
     public static TextBuilderPS Create(bool isUsingList = false)
     {
         return new TextBuilderPS(isUsingList);
     }
 
-    /// <summary>
-    /// Initializes a new instance of TextBuilderPS.
-    /// </summary>
-    /// <param name="isUsingList">Whether to use list mode instead of StringBuilder mode.</param>
     public TextBuilderPS(bool isUsingList = false)
     {
         this.isUsingList = isUsingList;
@@ -67,9 +43,6 @@ public class TextBuilderPS
         }
     }
 
-    /// <summary>
-    /// Gets or sets whether undo is enabled. When disabled, resets undo state.
-    /// </summary>
     public bool CanUndo
     {
         get
@@ -96,9 +69,6 @@ public class TextBuilderPS
         ThrowEx.IsNotAllowed(what);
     }
 
-    /// <summary>
-    /// Undoes the last append operation. Only supported in StringBuilder mode.
-    /// </summary>
     public void Undo()
     {
         if (isUsingList)
@@ -111,10 +81,6 @@ public class TextBuilderPS
         }
     }
 
-    /// <summary>
-    /// Appends text without a trailing newline.
-    /// </summary>
-    /// <param name="text">Text to append.</param>
     public void Append(string text)
     {
         if (isUsingList)
@@ -149,10 +115,6 @@ public class TextBuilderPS
         }
     }
 
-    /// <summary>
-    /// Appends an object's string representation.
-    /// </summary>
-    /// <param name="value">Object to append.</param>
     public void Append(object value)
     {
         string textString = value.ToString() ?? string.Empty;
@@ -160,18 +122,11 @@ public class TextBuilderPS
         Append(textString);
     }
 
-    /// <summary>
-    /// Appends a newline.
-    /// </summary>
     public void AppendLine()
     {
         Append(Environment.NewLine);
     }
 
-    /// <summary>
-    /// Appends text followed by a newline.
-    /// </summary>
-    /// <param name="text">Text to append as a line.</param>
     public void AppendLine(string text)
     {
         if (isUsingList)
@@ -185,10 +140,6 @@ public class TextBuilderPS
         }
     }
 
-    /// <summary>
-    /// Returns the accumulated text as a string.
-    /// </summary>
-    /// <returns>String representation of accumulated content.</returns>
     public override string ToString()
     {
         if (isUsingList)
