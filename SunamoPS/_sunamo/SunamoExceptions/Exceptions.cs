@@ -10,10 +10,8 @@ internal sealed partial class Exceptions
     /// </summary>
     /// <param name="before">Context label to prepend.</param>
     /// <returns>Formatted prefix string.</returns>
-    internal static string CheckBefore(string before)
-    {
-        return string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
-    }
+    internal static string CheckBefore(string before) =>
+        string.IsNullOrWhiteSpace(before) ? string.Empty : before + ": ";
 
     /// <summary>
     /// Builds a complete error message from an exception and its inner exceptions.
@@ -108,10 +106,8 @@ internal sealed partial class Exceptions
     /// <param name="before">Context label.</param>
     /// <param name="what">What is not allowed.</param>
     /// <returns>Formatted message or null.</returns>
-    internal static string? IsNotAllowed(string before, string what)
-    {
-        return CheckBefore(before) + what + " is not allowed.";
-    }
+    internal static string? IsNotAllowed(string before, string what) =>
+        CheckBefore(before) + what + " is not allowed.";
 
     /// <summary>
     /// Returns a formatted custom error message.
@@ -119,8 +115,6 @@ internal sealed partial class Exceptions
     /// <param name="before">Context label.</param>
     /// <param name="message">Custom error message.</param>
     /// <returns>Formatted message or null.</returns>
-    internal static string? Custom(string before, string message)
-    {
-        return CheckBefore(before) + message;
-    }
+    internal static string? Custom(string before, string message) =>
+        CheckBefore(before) + message;
 }

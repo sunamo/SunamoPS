@@ -26,15 +26,8 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     /// </summary>
     public bool SaveUsedCommandToDictionary
     {
-        get
-        {
-            return saveUsedCommandToDictionary;
-        }
-
-        set
-        {
-            saveUsedCommandToDictionary = value;
-        }
+        get => saveUsedCommandToDictionary;
+        set => saveUsedCommandToDictionary = value;
     }
 
     /// <summary>
@@ -45,15 +38,10 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     /// <param name="invokeArgs">Optional invocation arguments for caching, progress, and command prepending.</param>
     /// <returns>List of output lists, one per command.</returns>
     public
-#if ASYNC
         async Task<List<List<string>>>
-#else
-    List<List<string>>
-#endif
     Invoke(List<string> commands, PsInvokeArgs? invokeArgs = null)
     {
-        if (invokeArgs == null)
-            invokeArgs = new PsInvokeArgs();
+        invokeArgs ??= new PsInvokeArgs();
         var isFileExisting = false;
         if (invokeArgs.PathToSaveLoadPsOutput != null && File.Exists(invokeArgs.PathToSaveLoadPsOutput))
         {
@@ -71,8 +59,7 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         {
             if (item.Trim().StartsWith("cd "))
             {
-                if (prependCommands == null)
-                    prependCommands = new List<string>();
+                prependCommands ??= new List<string>();
                 isRemovingFirst = true;
                 prependCommands.Add(item);
             }
@@ -98,12 +85,7 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
                 PSDataCollection<PSObject>? psObjects = null;
                 try
                 {
-#if ASYNC
                     psObjects = await powerShell.InvokeAsync();
-#else
-                    var asyncResult = powerShell.BeginInvoke();
-                    psObjects = powerShell.EndInvoke(asyncResult);
-#endif
                 }
                 catch (Exception exception)
                 {
@@ -161,18 +143,12 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     /// <param name="isWritingProgressBar">Whether to write progress bar updates.</param>
     /// <returns>List of output lines.</returns>
     public
-#if ASYNC
         async Task<List<string>>
-#else
-string
-#endif
     InvokeLinesFromString(string text, bool isWritingProgressBar)
     {
         var commandList = SHGetLines.GetLines(text);
         var result =
-#if ASYNC
             await
-#endif
         Invoke(commandList, new PsInvokeArgs { IsWritingProgressBar = isWritingProgressBar });
         var stringBuilder = new StringBuilder();
         foreach (var item in result)
@@ -187,17 +163,11 @@ string
     /// <param name="command">Command to execute.</param>
     /// <returns>List of output lines from the command.</returns>
     public
-#if ASYNC
 async Task<List<string>>
-#else
-    List<string>
-#endif
     InvokeSingle(string command)
     {
         return (
-#if ASYNC
 await
-#endif
         Invoke(new List<string>([command])))[0];
     }
 }

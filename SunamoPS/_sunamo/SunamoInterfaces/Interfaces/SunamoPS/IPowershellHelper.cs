@@ -5,17 +5,9 @@ namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 /// </summary>
 internal interface IPowershellHelper
 {
-#if ASYNC
     Task
-#else
-void
-#endif
         CmdC(string command, Func<bool, TextBuilderPS> textBuilderFactory);
-#if ASYNC
     Task<string?>
-#else
-string?
-#endif
         DetectLanguageForFileGithubLinguist(string windowsPath);
 
     /// <summary>

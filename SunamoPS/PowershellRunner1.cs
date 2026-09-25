@@ -15,15 +15,10 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     /// <param name="processArgs">Optional process invocation arguments (e.g., working directory).</param>
     /// <returns>List of output lines from the process.</returns>
     public
-#if ASYNC
         async Task<List<string>>
-#else
-    List<string>
-#endif
     InvokeProcess(string exeFileNameWithoutPath, string arguments, InvokeProcessArgsPS? processArgs = null)
     {
-        if (processArgs == null)
-            processArgs = new InvokeProcessArgsPS();
+        processArgs ??= new InvokeProcessArgsPS();
 
         if (!exeFileNameWithoutPath.EndsWith(AllExtensions.Exe))
             exeFileNameWithoutPath += AllExtensions.Exe;
@@ -38,11 +33,7 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         process.Start();
 
         var standardOutput = process.StandardOutput.ReadToEnd();
-#if ASYNC
         await process.WaitForExitAsync();
-#else
-        process.WaitForExit();
-#endif
         var result = SHGetLines.GetLines(standardOutput);
         return result;
     }
