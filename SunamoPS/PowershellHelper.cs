@@ -1,11 +1,22 @@
 namespace SunamoPS;
 
+/// <summary>
+/// Helper class providing PowerShell utility methods for process listing, language detection, and script parsing.
+/// </summary>
 public class PowershellHelper : IPowershellHelper
 {
     private const string languagePrefix = "language:";
 
+    /// <summary>
+    /// Singleton instance of PowershellHelper.
+    /// </summary>
     public static PowershellHelper Instance { get; } = new();
 
+    /// <summary>
+    /// Finds duplicated method names in a parsed PowerShell script.
+    /// </summary>
+    /// <param name="methods">List of parsed PowerShell methods.</param>
+    /// <returns>Formatted string listing method names and their line numbers.</returns>
     public static string FindDuplicatedMethodsInPs1File(List<PowershellMethod> methods)
     {
         var grouped = methods.GroupBy(method => method.Name);
@@ -18,6 +29,11 @@ public class PowershellHelper : IPowershellHelper
         return resultBuilder.ToString();
     }
 
+    /// <summary>
+    /// Parses PowerShell code into a list of method definitions with their names, bodies, and line numbers.
+    /// </summary>
+    /// <param name="powerShellCode">PowerShell source code to parse.</param>
+    /// <returns>List of parsed PowerShell methods.</returns>
     public static List<PowershellMethod> ParseMethods(string powerShellCode)
     {
         List<PowershellMethod> methods = new();
@@ -45,6 +61,10 @@ public class PowershellHelper : IPowershellHelper
     {
     }
 
+    /// <summary>
+    /// Gets the names of all currently running processes.
+    /// </summary>
+    /// <returns>List of process names.</returns>
     public List<string> ProcessNames()
     {
         var processNames = new List<string>();
@@ -59,6 +79,11 @@ public class PowershellHelper : IPowershellHelper
         return processNames;
     }
 
+    /// <summary>
+    /// Executes a command via cmd /c in a PowerShell session.
+    /// </summary>
+    /// <param name="command">Command to execute.</param>
+    /// <param name="textBuilderFactory">Factory function for creating a TextBuilderPS.</param>
     public
         async Task
         CmdC(string command, Func<bool, TextBuilderPS> textBuilderFactory)
@@ -69,6 +94,11 @@ public class PowershellHelper : IPowershellHelper
             PowershellRunner.Instance.Invoke(builder.ToList());
     }
 
+    /// <summary>
+    /// Detects the programming language of a file using GitHub Linguist via WSL.
+    /// </summary>
+    /// <param name="windowsPath">Windows file path to analyze.</param>
+    /// <returns>Detected language name, or null if not found.</returns>
     public
         async Task<string?>
         DetectLanguageForFileGithubLinguist(string windowsPath)

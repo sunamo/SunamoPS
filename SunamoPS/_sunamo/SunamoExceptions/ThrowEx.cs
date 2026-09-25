@@ -2,8 +2,18 @@ namespace SunamoPS._sunamo.SunamoExceptions;
 
 using Debugger = System.Diagnostics.Debugger;
 
+/// <summary>
+/// Helper for throwing formatted exceptions with context information.
+/// </summary>
 internal partial class ThrowEx
 {
+    /// <summary>
+    /// Throws a custom exception with the specified message.
+    /// </summary>
+    /// <param name="message">Primary error message.</param>
+    /// <param name="isReallyThrowing">Whether to actually throw or just return true.</param>
+    /// <param name="secondMessage">Optional additional message.</param>
+    /// <returns>True if exception was triggered, false otherwise.</returns>
     internal static bool Custom(string message, bool isReallyThrowing = true, string secondMessage = "")
     {
         string joined = string.Join(" ", message, secondMessage);
@@ -11,9 +21,18 @@ internal partial class ThrowEx
         return ThrowIsNotNull(exceptionText, isReallyThrowing);
     }
 
+    /// <summary>
+    /// Throws an exception indicating that an operation is not allowed.
+    /// </summary>
+    /// <param name="what">Description of what is not allowed.</param>
+    /// <returns>True if exception was triggered.</returns>
     internal static bool IsNotAllowed(string what) =>
         ThrowIsNotNull(Exceptions.IsNotAllowed(FullNameOfExecutedCode(), what));
 
+    /// <summary>
+    /// Gets the full name (type.method) of the currently executing code.
+    /// </summary>
+    /// <returns>Full name string in format "Namespace.Type.Method".</returns>
     internal static string FullNameOfExecutedCode()
     {
         Tuple<string, string, string> placeOfException = Exceptions.PlaceOfException();
@@ -55,6 +74,12 @@ internal partial class ThrowEx
         return string.Concat(typeFullName, ".", methodName);
     }
 
+    /// <summary>
+    /// Throws an exception if the provided message is not null.
+    /// </summary>
+    /// <param name="exceptionMessage">Exception message to throw, or null to skip.</param>
+    /// <param name="isReallyThrowing">Whether to actually throw or just return true.</param>
+    /// <returns>True if message was not null, false otherwise.</returns>
     internal static bool ThrowIsNotNull(string? exceptionMessage, bool isReallyThrowing = true)
     {
         if (exceptionMessage != null)

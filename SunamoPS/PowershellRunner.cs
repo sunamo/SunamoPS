@@ -1,7 +1,13 @@
 namespace SunamoPS;
 
+/// <summary>
+/// Core PowerShell command runner that executes commands and returns structured output.
+/// </summary>
 public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>>
 {
+    /// <summary>
+    /// Singleton instance of PowershellRunner.
+    /// </summary>
     public static PowershellRunner Instance { get; } = new();
 
     private bool saveUsedCommandToDictionary;
@@ -10,14 +16,27 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
     {
     }
 
+    /// <summary>
+    /// Gets or sets the progress state for tracking command execution.
+    /// </summary>
     public ProgressStatePS ProgressState { get; set; } = new();
 
+    /// <summary>
+    /// Gets or sets whether executed commands should be saved to a dictionary.
+    /// </summary>
     public bool SaveUsedCommandToDictionary
     {
         get => saveUsedCommandToDictionary;
         set => saveUsedCommandToDictionary = value;
     }
 
+    /// <summary>
+    /// Invokes a list of PowerShell commands and returns structured output.
+    /// For each command, returns at least one entry in the result.
+    /// </summary>
+    /// <param name="commands">List of PowerShell commands to execute.</param>
+    /// <param name="invokeArgs">Optional invocation arguments for caching, progress, and command prepending.</param>
+    /// <returns>List of output lists, one per command.</returns>
     public
         async Task<List<List<string>>>
     Invoke(List<string> commands, PsInvokeArgs? invokeArgs = null)
@@ -117,6 +136,12 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         return returnList;
     }
 
+    /// <summary>
+    /// Invokes commands parsed from a multi-line string and returns the combined output as lines.
+    /// </summary>
+    /// <param name="text">Multi-line string containing commands.</param>
+    /// <param name="isWritingProgressBar">Whether to write progress bar updates.</param>
+    /// <returns>List of output lines.</returns>
     public
         async Task<List<string>>
     InvokeLinesFromString(string text, bool isWritingProgressBar)
@@ -132,6 +157,11 @@ public partial class PowershellRunner : PsOutput, IPowershellRunner<List<string>
         return SHGetLines.GetLines(combinedOutput);
     }
 
+    /// <summary>
+    /// Invokes a single PowerShell command and returns its output.
+    /// </summary>
+    /// <param name="command">Command to execute.</param>
+    /// <returns>List of output lines from the command.</returns>
     public
 async Task<List<string>>
     InvokeSingle(string command)

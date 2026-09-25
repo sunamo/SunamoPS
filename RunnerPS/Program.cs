@@ -5,6 +5,9 @@ using SunamoPlatformUwpInterop.AppData;
 using SunamoPS;
 using SunamoPS.Tests;
 
+/// <summary>
+/// Entry point for the RunnerPS console application.
+/// </summary>
 internal class Program : ProgramShared
 {
     const string appName = "RunnerPS";
