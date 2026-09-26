@@ -5,17 +5,9 @@ namespace SunamoPS._sunamo.SunamoInterfaces.Interfaces.SunamoPS;
 /// </summary>
 internal interface IPowershellRunnerCommands
 {
-#if ASYNC
     Task<List<List<string>>>
-#else
-List<List<string>>
-#endif
         Invoke(List<string> commands);
-#if ASYNC
     Task<List<List<string>>>
-#else
-List<List<string>>
-#endif
         Invoke(List<string> commands, PsInvokeArgs? invokeArgs = null);
 
     /// <summary>

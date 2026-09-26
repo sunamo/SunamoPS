@@ -26,10 +26,8 @@ internal partial class ThrowEx
     /// </summary>
     /// <param name="what">Description of what is not allowed.</param>
     /// <returns>True if exception was triggered.</returns>
-    internal static bool IsNotAllowed(string what)
-    {
-        return ThrowIsNotNull(Exceptions.IsNotAllowed(FullNameOfExecutedCode(), what));
-    }
+    internal static bool IsNotAllowed(string what) =>
+        ThrowIsNotNull(Exceptions.IsNotAllowed(FullNameOfExecutedCode(), what));
 
     /// <summary>
     /// Gets the full name (type.method) of the currently executing code.

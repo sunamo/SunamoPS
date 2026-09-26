@@ -85,18 +85,12 @@ public class PowershellHelper : IPowershellHelper
     /// <param name="command">Command to execute.</param>
     /// <param name="textBuilderFactory">Factory function for creating a TextBuilderPS.</param>
     public
-#if ASYNC
         async Task
-#else
-void
-#endif
         CmdC(string command, Func<bool, TextBuilderPS> textBuilderFactory)
     {
         var builder = PowershellBuilder.Create(textBuilderFactory);
         builder.CmdC(command);
-#if ASYNC
         await
-#endif
             PowershellRunner.Instance.Invoke(builder.ToList());
     }
 
@@ -106,11 +100,7 @@ void
     /// <param name="windowsPath">Windows file path to analyze.</param>
     /// <returns>Detected language name, or null if not found.</returns>
     public
-#if ASYNC
         async Task<string?>
-#else
-string?
-#endif
         DetectLanguageForFileGithubLinguist(string windowsPath)
     {
         string command;
@@ -122,9 +112,7 @@ string?
         command = "wsl";
         string arguments = " bash -c \"github-linguist '" + linuxPath + "'\"";
         var lines =
-#if ASYNC
             await
-#endif
                 PowershellRunner.Instance.InvokeProcess(command + ".exe", arguments);
         var languageLine = lines.First(line => line.Contains(languagePrefix));
         if (languageLine == null) return null;

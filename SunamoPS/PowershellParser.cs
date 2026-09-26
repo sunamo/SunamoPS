@@ -25,7 +25,7 @@ public class PowershellParser : IPowershellParser
         if (text.Contains(charWhichIsNotContained)) throw new Exception(text + " contains " + charWhichIsNotContained);
 
         var stringBuilder = new StringBuilder(text);
-        var quotedMatches = Regex.Matches(text, "\"([^\"]*)\"").Select(match => match.Value);
+        var quotedMatches = Regex.Matches(text, "\"([^\"]*)\"").Cast<Match>().Select(match => match.Value);
         foreach (var item in quotedMatches) stringBuilder = stringBuilder.Replace(item, item.Replace(" ", charWhichIsNotContained));
 
         var parts = SHSplit.Split(stringBuilder.ToString(), " ");
