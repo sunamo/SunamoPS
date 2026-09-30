@@ -7,8 +7,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SunamoDebugIO\SunamoDebugIO\SunamoDebugIO.csproj" />
-    <ProjectReference Include="..\..\SunamoPlatformUwpInterop\SunamoPlatformUwpInterop\SunamoPlatformUwpInterop.csproj" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="*" Pack="True" />
     <ProjectReference Include="..\SunamoPS.Tests\SunamoPS.Tests.csproj" />
   </ItemGroup>
