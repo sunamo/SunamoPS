@@ -1,5 +1,10 @@
 # SunamoPS
 
+## Short description
+
+Knihovna pro práci s PowerShell 7: spouštění příkazů a skriptů (`PowershellRunner`, `PowershellBuilder`), parsování a zpracování výstupů (`PowershellParser`, `PsOutput`, `ErrorRecordHelper`). Staví na `Microsoft.PowerShell.SDK` a `System.Management.Automation`.
+Balíček je self-contained: kód dříve referencovaných balíčků (SunamoExceptions, SunamoStringGetLines, SunamoStringSplit, SunamoDictionary, SunamoInterfaces aj.) je zkopírován do `_sunamo\` jako internal; jiné Sunamo balíčky z projektu SunamoPS nereferencuje (pomocný projekt RunnerPS má ještě project reference).
+
 A .NET library for working with PowerShell 7 — invoking commands, capturing output, parsing scripts, and running external processes.
 
 ## Overview
