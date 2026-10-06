@@ -1,8 +1,5 @@
 namespace SunamoPS._sunamo;
 
-/// <summary>
-/// String join helper methods.
-/// </summary>
 internal class SHJoin
 {
     /// <summary>
