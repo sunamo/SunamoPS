@@ -1,5 +1,8 @@
 namespace SunamoPS._public;
 
+/// <summary>
+/// Represents the text builder PS type.
+/// </summary>
 public class TextBuilderPS
 {
     private bool canUndo = false;
@@ -7,12 +10,25 @@ public class TextBuilderPS
     private string lastText = "";
     private bool isUsingList = false;
 
+    /// <summary>
+    /// Gets or sets the string builder.
+    /// </summary>
     public StringBuilder? StringBuilder { get; set; } = null;
 
+    /// <summary>
+    /// Gets or sets the prepend every no white.
+    /// </summary>
     public string PrependEveryNoWhite { get; set; } = string.Empty;
 
+    /// <summary>
+    /// Gets or sets the list.
+    /// </summary>
     public List<string>? List { get; set; }
 
+    /// <summary>
+    /// Clear.
+    /// </summary>
+    /// <returns>The clear result.</returns>
     public void Clear()
     {
         if (isUsingList)
@@ -25,11 +41,18 @@ public class TextBuilderPS
         }
     }
 
+    /// <summary>
+    /// Create.
+    /// </summary>
+    /// <returns>The create result.</returns>
     public static TextBuilderPS Create(bool isUsingList = false)
     {
         return new TextBuilderPS(isUsingList);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the text builder PS class.
+    /// </summary>
     public TextBuilderPS(bool isUsingList = false)
     {
         this.isUsingList = isUsingList;
@@ -43,6 +66,9 @@ public class TextBuilderPS
         }
     }
 
+    /// <summary>
+    /// The can undo.
+    /// </summary>
     public bool CanUndo
     {
         get
@@ -69,6 +95,11 @@ public class TextBuilderPS
         ThrowEx.IsNotAllowed(what);
     }
 
+    /// <summary>
+    /// Undo.
+    /// </summary>
+    /// <param name="what">The what.</param>
+    /// <returns>The undo result.</returns>
     public void Undo()
     {
         if (isUsingList)
@@ -81,6 +112,9 @@ public class TextBuilderPS
         }
     }
 
+    /// <summary>
+    /// Append.
+    /// </summary>
     public void Append(string text)
     {
         if (isUsingList)
@@ -115,6 +149,11 @@ public class TextBuilderPS
         }
     }
 
+    /// <summary>
+    /// Append.
+    /// </summary>
+    /// <param name="isUsingList">The is using list.</param>
+    /// <returns>The append result.</returns>
     public void Append(object value)
     {
         string textString = value.ToString() ?? string.Empty;
@@ -122,11 +161,20 @@ public class TextBuilderPS
         Append(textString);
     }
 
+    /// <summary>
+    /// Append line.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>The append line result.</returns>
     public void AppendLine()
     {
         Append(Environment.NewLine);
     }
 
+    /// <summary>
+    /// Append line.
+    /// </summary>
+    /// <param name="value">The value.</param>
     public void AppendLine(string text)
     {
         if (isUsingList)
@@ -140,6 +188,11 @@ public class TextBuilderPS
         }
     }
 
+    /// <summary>
+    /// To string.
+    /// </summary>
+    /// <param name="isUsingList">The is using list.</param>
+    /// <returns>The to string result.</returns>
     public override string ToString()
     {
         if (isUsingList)
